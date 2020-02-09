@@ -17,6 +17,7 @@ export interface AsciidocExtensionPath {
     asciidocText: string,
     extensionPath: vscode.Uri,
     scriptUris: Array<vscode.Uri>
+    stylesheetUris: Array<vscode.Uri>
 }
 
 export interface AsciidocExtensionPathSlidesHtml extends AsciidocExtensionPath {
@@ -25,6 +26,10 @@ export interface AsciidocExtensionPathSlidesHtml extends AsciidocExtensionPath {
 
 export interface AsciidocExtensionPathSlidesHtmlWithScripts extends AsciidocExtensionPathSlidesHtml {
     scriptsHtml: string
+}
+
+export interface AsciidocExtensionPathSlidesHtmlWithScriptsAndStyles extends AsciidocExtensionPathSlidesHtmlWithScripts {
+    stylesHtml: string
 }
 
 export function convertAsciidocToRevealJsHtml(asciidocTextExtensionPath: AsciidocExtensionPath) : AsciidocExtensionPathSlidesHtml {
@@ -53,4 +58,10 @@ export function addScripts(input: AsciidocExtensionPathSlidesHtml) : AsciidocExt
     </script>
     `
     return R.addProp(input, 'scriptsHtml', scriptsHtml)
+}
+
+export function addStyles (input: AsciidocExtensionPathSlidesHtmlWithScripts) : AsciidocExtensionPathSlidesHtmlWithScriptsAndStyles {
+    const stylesHtml = R.map(input.stylesheetUris, uri => '<link rel="stylesheet" href="' + uri + '">').join("\n")
+
+    return R.addProp(input, 'stylesHtml', stylesHtml)
 }

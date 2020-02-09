@@ -2,7 +2,7 @@ import * as htmlValidator from 'html-validator'
 import { expect } from 'chai'
 import * as R from 'remeda'
 
-import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml } from '../../utils'
+import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml, addStyles } from '../../utils'
 import * as vscode from 'vscode'
 import HtmlValidator = require('html-validator')
 
@@ -28,14 +28,19 @@ async function validate (options: HtmlValidator.OptionsForHtmlFileAsValidationTa
 
 suite('Utils Test Suite', () => {
 
-    const initialInput : AsciidocExtensionPath = {
+    const convertInput : AsciidocExtensionPath = {
         asciidocText,
         extensionPath: vscode.Uri.file('.'),
-        scriptUris: [vscode.Uri.file('js/reveal.js')]
+        scriptUris: [vscode.Uri.file('js/reveal.js')],
+        stylesheetUris: [vscode.Uri.file('js/style.css')],
     }
 
+    const addScriptsInput = R.addProp(convertInput, 'slidesHtml', '');
+
+    const addStylesInput = R.addProp(addScriptsInput, 'scriptsHtml', '');
+
 	test('convertAsciidocToRevealJsHtml should produce valid Html', async () => {
-        const result = convertAsciidocToRevealJsHtml(initialInput)
+        const result = convertAsciidocToRevealJsHtml(convertInput)
 
 		const options = {
             data: result.slidesHtml,
@@ -46,11 +51,21 @@ suite('Utils Test Suite', () => {
     })
 
     test('addScripts should produce valid Html', async () => {
-        const input = R.addProp(initialInput, 'slidesHtml', '');
-        const result = addScripts(input)
+        const result = addScripts(addScriptsInput)
 
 		const options = {
             data: result.scriptsHtml,
+            isFragment: true
+		}
+		
+		await validate(options)
+    })
+
+    test('addStyles should produce valid Html', async () => {
+        const result = addStyles(addStylesInput)
+
+		const options = {
+            data: result.stylesHtml,
             isFragment: true
 		}
 		
