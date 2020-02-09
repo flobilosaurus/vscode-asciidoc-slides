@@ -1,5 +1,7 @@
 = vscode asciidoc slides 
 
+image::https://dev.azure.com/flobilosaurus/vscode-asciidoc-slides/_apis/build/status/flobilosaurus.vscode-asciidoc-slides?branchName=master[]
+
 Visual Studio Code extension to create https://github.com/hakimel/reveal.js[reveal.js] slides via asciidoc documents.
 
 == Features
