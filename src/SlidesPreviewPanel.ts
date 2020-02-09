@@ -66,6 +66,8 @@ export class SlidesPreviewPanel {
 			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'js', 'reveal.js')
 		]
 
+		vscode.workspace.onDidSaveTextDocument(this._update, this)
+
 		this._update();
 
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
