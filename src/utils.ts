@@ -15,7 +15,7 @@ asciidoctorRevealjs.register()
 
 export interface AsciidocExtensionPath {
     asciidocText: string,
-    extensionPath: vscode.Uri,
+    extensionPath: string,
     scriptUris: Array<vscode.Uri>
     stylesheetUris: Array<vscode.Uri>
 }
@@ -64,4 +64,22 @@ export function addStyles (input: AsciidocExtensionPathSlidesHtmlWithScripts) : 
     const stylesHtml = R.map(input.stylesheetUris, uri => '<link rel="stylesheet" href="' + uri + '">').join("\n")
 
     return R.addProp(input, 'stylesHtml', stylesHtml)
+}
+
+export function generatePreviewHtml (input: AsciidocExtensionPathSlidesHtmlWithScriptsAndStyles) : string {
+    const previewHtml = `
+    <!doctype html>
+    <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>asciidoc presenter</title>
+            ${input.stylesHtml}
+        </head>
+        <body>
+            ${input.slidesHtml}
+            ${input.scriptsHtml}
+        </body>
+    </html>`;
+    return previewHtml
 }

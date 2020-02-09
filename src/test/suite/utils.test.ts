@@ -2,7 +2,7 @@ import * as htmlValidator from 'html-validator'
 import { expect } from 'chai'
 import * as R from 'remeda'
 
-import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml, addStyles } from '../../utils'
+import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml, addStyles, generatePreviewHtml } from '../../utils'
 import * as vscode from 'vscode'
 import HtmlValidator = require('html-validator')
 
@@ -30,14 +30,16 @@ suite('Utils Test Suite', () => {
 
     const convertInput : AsciidocExtensionPath = {
         asciidocText,
-        extensionPath: vscode.Uri.file('.'),
+        extensionPath: '.',
         scriptUris: [vscode.Uri.file('js/reveal.js')],
-        stylesheetUris: [vscode.Uri.file('js/style.css')],
+        stylesheetUris: [vscode.Uri.file('css/style.css')],
     }
 
     const addScriptsInput = R.addProp(convertInput, 'slidesHtml', '');
 
-    const addStylesInput = R.addProp(addScriptsInput, 'scriptsHtml', '');
+    const addStylesInput = R.addProp(addScriptsInput, 'scriptsHtml', '<script src="js/reveal.js"></script>');
+
+    const generatePreviewHtmlInput = R.addProp(addStylesInput, 'stylesHtml', '<link rel="stylesheet" href="css/style.css">');
 
 	test('convertAsciidocToRevealJsHtml should produce valid Html', async () => {
         const result = convertAsciidocToRevealJsHtml(convertInput)
@@ -67,6 +69,16 @@ suite('Utils Test Suite', () => {
 		const options = {
             data: result.stylesHtml,
             isFragment: true
+		}
+		
+		await validate(options)
+    })
+    
+    test('generatePreviewHtml should produce valid Html', async () => {
+        const result = generatePreviewHtml(generatePreviewHtmlInput)
+
+		const options = {
+            data: result
 		}
 		
 		await validate(options)

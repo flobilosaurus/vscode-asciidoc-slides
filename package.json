@@ -10,14 +10,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld"
+		"onCommand:asciidocSlides.preview"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
+				"command": "asciidocSlides.preview",
+				"title": "Asciidoc Slides: Show Slides Preview Beside"
 			}
 		]
 	},
