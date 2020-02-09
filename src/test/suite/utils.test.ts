@@ -1,7 +1,8 @@
 import * as htmlValidator from 'html-validator'
 import { expect } from 'chai'
+import * as R from 'remeda'
 
-import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath } from '../../utils'
+import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml } from '../../utils'
 import * as vscode from 'vscode'
 import HtmlValidator = require('html-validator')
 
@@ -29,7 +30,8 @@ suite('Utils Test Suite', () => {
 
     const initialInput : AsciidocExtensionPath = {
         asciidocText,
-        extensionPath: vscode.Uri.file('.')
+        extensionPath: vscode.Uri.file('.'),
+        scriptUris: [vscode.Uri.file('js/reveal.js')]
     }
 
 	test('convertAsciidocToRevealJsHtml should produce valid Html', async () => {
@@ -43,4 +45,15 @@ suite('Utils Test Suite', () => {
 		await validate(options)
     })
 
+    test('addScripts should produce valid Html', async () => {
+        const input = R.addProp(initialInput, 'slidesHtml', '');
+        const result = addScripts(input)
+
+		const options = {
+            data: result.scriptsHtml,
+            isFragment: true
+		}
+		
+		await validate(options)
+    })
 })

@@ -1,5 +1,6 @@
 import * as R from 'remeda';
 import * as vscode from 'vscode';
+import * as path from 'path'
 
 /**
  * Check if Opal has been loaded already, if not, require through asciidoctor.js
@@ -14,11 +15,16 @@ asciidoctorRevealjs.register()
 
 export interface AsciidocExtensionPath {
     asciidocText: string,
-    extensionPath: vscode.Uri
+    extensionPath: vscode.Uri,
+    scriptUris: Array<vscode.Uri>
 }
 
 export interface AsciidocExtensionPathSlidesHtml extends AsciidocExtensionPath {
     slidesHtml: string
+}
+
+export interface AsciidocExtensionPathSlidesHtmlWithScripts extends AsciidocExtensionPathSlidesHtml {
+    scriptsHtml: string
 }
 
 export function convertAsciidocToRevealJsHtml(asciidocTextExtensionPath: AsciidocExtensionPath) : AsciidocExtensionPathSlidesHtml {
@@ -33,4 +39,18 @@ export function convertAsciidocToRevealJsHtml(asciidocTextExtensionPath: Asciido
         </div>
     `
     return R.addProp(asciidocTextExtensionPath, 'slidesHtml', revealJsSlides)
+}
+
+export function addScripts(input: AsciidocExtensionPathSlidesHtml) : AsciidocExtensionPathSlidesHtmlWithScripts {
+    const scriptsHtml = `
+        ${input.scriptUris.map(uri => '<script src="' + uri + '"></script>').join("\n")}
+    <script>
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            display: 'block'
+        });
+    </script>
+    `
+    return R.addProp(input, 'scriptsHtml', scriptsHtml)
 }
