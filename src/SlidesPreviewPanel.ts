@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path'
 import * as R from 'remeda'
 
-import {generatePreviewHtml, convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addStyles, addScripts} from './utils'
+import {generatePreviewHtml, convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addStyles, addScripts, getCurrentSlideNumbers} from './utils'
 
 export class SlidesPreviewPanel {
 	public static currentPanel: SlidesPreviewPanel | undefined;
@@ -66,11 +66,24 @@ export class SlidesPreviewPanel {
 			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'js', 'reveal.js')
 		]
 
-		vscode.workspace.onDidSaveTextDocument(this._update, this)
+		vscode.workspace.onDidSaveTextDocument(() => {
+			this._update()
+			this.goToCurrentSlide()
+		}, this)
 
 		this._update();
 
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+	}
+
+	public goToCurrentSlide () {
+		const content = this._baseEditor.document.getText()
+		const position = this._baseEditor.selection.active
+		const slideNumbers = getCurrentSlideNumbers(content, position.line)
+		if(slideNumbers) {
+			const {hSlideNumber, vSlideNumber} = slideNumbers
+			this._panel.webview.postMessage({ command: 'gotoSlide', hSlideNumber, vSlideNumber })
+		}
 	}
 
 	public dispose() {

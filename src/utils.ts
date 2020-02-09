@@ -48,7 +48,22 @@ export function convertAsciidocToRevealJsHtml(asciidocTextExtensionPath: Asciido
 
 export function addScripts(input: AsciidocExtensionPathSlidesHtml) : AsciidocExtensionPathSlidesHtmlWithScripts {
     const scriptsHtml = `
-        ${input.scriptUris.map(uri => '<script src="' + uri + '"></script>').join("\n")}
+    <script>
+    (function () { 
+        const vscode = acquireVsCodeApi();
+        addEventListener('message', event => {
+            const message = event.data;
+            switch (message.command) {
+                case 'gotoSlide':
+                    Reveal.slide( message.hSlideNumber, message.vSlideNumber );
+                    break;
+            }
+        });
+        
+    })()
+    </script>
+    ${input.scriptUris.map(uri => '<script src="' + uri + '"></script>').join("\n")}
+    
     <script>
         Reveal.initialize({
             controls: true,
@@ -82,4 +97,24 @@ export function generatePreviewHtml (input: AsciidocExtensionPathSlidesHtmlWithS
         </body>
     </html>`;
     return previewHtml
+}
+
+export function getCurrentSlideNumbers (content: string, line : number) : {hSlideNumber: number, vSlideNumber: number} | null {
+    const lines = content.split('\n')
+    if (lines && lines.length > 1) {
+        const linesInRange = lines.slice(0, line + 1)
+        let hSlideNumber = -1
+        let vSlideNumber = 0
+        linesInRange.forEach(l => {
+            if(l.startsWith('== ')) {
+                hSlideNumber++
+                vSlideNumber = 0
+            }
+            if(l.startsWith('=== ')) {
+                vSlideNumber++
+            }
+        })
+        return {hSlideNumber, vSlideNumber}
+    }
+    return null
 }

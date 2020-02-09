@@ -2,7 +2,7 @@ import * as htmlValidator from 'html-validator'
 import { expect } from 'chai'
 import * as R from 'remeda'
 
-import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml, addStyles, generatePreviewHtml } from '../../utils'
+import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml, addStyles, generatePreviewHtml, getCurrentSlideNumbers } from '../../utils'
 import * as vscode from 'vscode'
 import HtmlValidator = require('html-validator')
 
@@ -83,4 +83,19 @@ suite('Utils Test Suite', () => {
 		
 		await validate(options)
     })
+
+    test('getCurrentSlideNumbers should return null when no content given', async () => {
+		const lineNumbers = getCurrentSlideNumbers("", 1)
+		expect(lineNumbers).to.equal(null)
+	})
+
+	test('getCurrentSlideNumbers should calculate correct hSlideNumbers', async () => {
+		const lineNumbers = getCurrentSlideNumbers(asciidocText, 2)
+		expect(lineNumbers).to.deep.equal({ hSlideNumber: 0, vSlideNumber: 0 })
+	})
+
+	test('getCurrentSlideNumbers should calculate correct vSlideNumbers', async () => {
+		const lineNumbers = getCurrentSlideNumbers(asciidocText, 7)
+		expect(lineNumbers).to.deep.equal({ hSlideNumber: 0, vSlideNumber: 2 })
+	})
 })
