@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path'
 import * as R from 'remeda'
 
-import {generatePreviewHtml, convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addStyles, addScripts, getCurrentSlideNumbers} from './utils'
+import {generatePreviewHtml, convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addStyles, addScripts, getCurrentSlideNumbers, extractTheme} from './utils'
 
 export class SlidesPreviewPanel {
 	public static currentPanel: SlidesPreviewPanel | undefined;
@@ -114,19 +114,23 @@ export class SlidesPreviewPanel {
         if(this._baseEditor) {
             asciidocText = this._baseEditor.document.getText()
 		}
-
+		
 		const input : AsciidocExtensionPath = {
 			asciidocText,
 			extensionPath: this._extensionPath,
 			localResourceBaseUri: this.getPathAsWebviewUri(this._baseEditor.document.fileName),
-			stylesheetUris: this.styleUris,
+			stylesheetUris: [...this.styleUris, this.getThemeUri(asciidocText)],
 			scriptUris: this.scriptUris,
 		}
-
-		return R.pipe(input, 
+        
+		return R.pipe(input,
 			convertAsciidocToRevealJsHtml,
 			addScripts,
 			addStyles,
 			generatePreviewHtml)
-	}        
+	}
+	
+	private getThemeUri(asciidocText: string) : vscode.Uri {
+		return this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'css', 'theme', `${extractTheme(asciidocText)}.css`)    
+	}
 }

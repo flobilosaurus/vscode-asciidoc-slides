@@ -2,11 +2,12 @@ import * as htmlValidator from 'html-validator'
 import { expect } from 'chai'
 import * as R from 'remeda'
 
-import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml, addStyles, generatePreviewHtml, getCurrentSlideNumbers } from '../../utils'
+import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml, addStyles, generatePreviewHtml, getCurrentSlideNumbers, extractTheme } from '../../utils'
 import * as vscode from 'vscode'
 import HtmlValidator = require('html-validator')
 
 const asciidocText = `
+:revealjs_theme: moon
 = Title
 
 == Slide 1
@@ -28,7 +29,7 @@ async function validate (options: HtmlValidator.OptionsForHtmlFileAsValidationTa
 
 suite('Utils Test Suite', () => {
 
-    const convertInput : AsciidocExtensionPath = {
+    const extractThemeInput : AsciidocExtensionPath = {
         asciidocText,
         extensionPath: '.',
         localResourceBaseUri: vscode.Uri.file('.'),
@@ -36,12 +37,19 @@ suite('Utils Test Suite', () => {
         stylesheetUris: [vscode.Uri.file('css/style.css')],
     }
 
+    const convertInput = R.addProp(extractThemeInput, 'theme', 'night');
+
     const addScriptsInput = R.addProp(convertInput, 'slidesHtml', '');
 
     const addStylesInput = R.addProp(addScriptsInput, 'scriptsHtml', '<script src="js/reveal.js"></script>');
 
     const generatePreviewHtmlInput = R.addProp(addStylesInput, 'stylesHtml', '<link rel="stylesheet" href="css/style.css">');
 
+    test('extractTheme works as expected', async () => {
+		const theme = extractTheme(asciidocText)
+		expect(theme).to.equal('moon')
+    })
+    
 	test('convertAsciidocToRevealJsHtml should produce valid Html', async () => {
         const result = convertAsciidocToRevealJsHtml(convertInput)
 
@@ -91,12 +99,12 @@ suite('Utils Test Suite', () => {
 	})
 
 	test('getCurrentSlideNumbers should calculate correct hSlideNumbers', async () => {
-		const lineNumbers = getCurrentSlideNumbers(asciidocText, 3)
+		const lineNumbers = getCurrentSlideNumbers(asciidocText, 4)
 		expect(lineNumbers).to.deep.equal({ hSlideNumber: 0, vSlideNumber: 0 })
 	})
 
 	test('getCurrentSlideNumbers should calculate correct vSlideNumbers', async () => {
-		const lineNumbers = getCurrentSlideNumbers(asciidocText, 8)
+		const lineNumbers = getCurrentSlideNumbers(asciidocText, 9)
 		expect(lineNumbers).to.deep.equal({ hSlideNumber: 0, vSlideNumber: 2 })
-	})
+    })
 })

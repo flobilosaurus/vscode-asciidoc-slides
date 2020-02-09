@@ -33,9 +33,27 @@ export interface AsciidocExtensionPathSlidesHtmlWithScriptsAndStyles extends Asc
     stylesHtml: string
 }
 
-export function convertAsciidocToRevealJsHtml(asciidocTextExtensionPath: AsciidocExtensionPath) : AsciidocExtensionPathSlidesHtml {
+export interface HeadIncludes {
+    stylesheets: Array<vscode.Uri>,
+    scripts: Array<vscode.Uri>
+}
+
+export interface AsciidocDocument {
+    attributes: {
+        $$smap: any
+    }
+}
+
+export function extractTheme(asciidocText: string) : string {
+    const doc = asciidoctor.load(asciidocText, { 'safe': 'safe' })
+    const theme = doc.attributes.$$smap['revealjs_theme'] || 'night'
+
+    return theme
+}
+
+export function convertAsciidocToRevealJsHtml(input: AsciidocExtensionPath) : AsciidocExtensionPathSlidesHtml {
     var options = { backend: 'revealjs' }
-    const sections = asciidoctor.convert(asciidocTextExtensionPath.asciidocText, options)
+    const sections = asciidoctor.convert(input.asciidocText, options)
     const revealJsSlides = `
 
         <div class="reveal">
@@ -44,7 +62,7 @@ export function convertAsciidocToRevealJsHtml(asciidocTextExtensionPath: Asciido
             </div>
         </div>
     `
-    return R.addProp(asciidocTextExtensionPath, 'slidesHtml', revealJsSlides)
+    return R.addProp(input, 'slidesHtml', revealJsSlides)
 }
 
 export function addScripts(input: AsciidocExtensionPathSlidesHtml) : AsciidocExtensionPathSlidesHtmlWithScripts {
@@ -120,3 +138,4 @@ export function getCurrentSlideNumbers (content: string, line : number) : {hSlid
     }
     return null
 }
+

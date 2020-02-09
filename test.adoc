@@ -1,3 +1,4 @@
+:revealjs_theme: moon
 = Title Slide
 
 == Slide One
