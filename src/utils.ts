@@ -16,6 +16,7 @@ asciidoctorRevealjs.register()
 export interface AsciidocExtensionPath {
     asciidocText: string,
     extensionPath: string,
+    localResourceBaseUri: vscode.Uri,
     scriptUris: Array<vscode.Uri>
     stylesheetUris: Array<vscode.Uri>
 }
@@ -89,6 +90,7 @@ export function generatePreviewHtml (input: AsciidocExtensionPathSlidesHtmlWithS
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>asciidoc presenter</title>
+            <base href="${input.localResourceBaseUri}">
             ${input.stylesHtml}
         </head>
         <body>

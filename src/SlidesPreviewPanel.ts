@@ -13,9 +13,7 @@ export class SlidesPreviewPanel {
     private readonly _extensionPath: string;
     private _baseEditor: vscode.TextEditor
 	private _disposables: vscode.Disposable[] = [];
-
 	private styleUris : Array<vscode.Uri>
-
 	private scriptUris : Array<vscode.Uri>
 
 	public static createOrShow(extensionPath: string) {
@@ -54,6 +52,8 @@ export class SlidesPreviewPanel {
 
 	private constructor(panel: vscode.WebviewPanel, baseEditor: vscode.TextEditor, extensionPath: string) {
 		this._panel = panel;
+		this._panel.webview.onDidReceiveMessage(() => this.goToCurrentSlide(), null, this._disposables);
+
 		this._extensionPath = extensionPath;
 		this._baseEditor = baseEditor
 
@@ -66,14 +66,16 @@ export class SlidesPreviewPanel {
 			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'js', 'reveal.js')
 		]
 
-		vscode.workspace.onDidSaveTextDocument(() => {
-			this._update()
-			this.goToCurrentSlide()
-		}, this)
-
+		vscode.workspace.onDidSaveTextDocument(this.onSaveBaseDocument, this, this._disposables)
+		
 		this._update();
 
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+	}
+
+	private onSaveBaseDocument() {
+		this._update()
+		this.goToCurrentSlide()
 	}
 
 	public goToCurrentSlide () {
@@ -115,9 +117,10 @@ export class SlidesPreviewPanel {
 
 		const input : AsciidocExtensionPath = {
 			asciidocText,
+			extensionPath: this._extensionPath,
+			localResourceBaseUri: this.getPathAsWebviewUri(this._baseEditor.document.fileName),
 			stylesheetUris: this.styleUris,
 			scriptUris: this.scriptUris,
-			extensionPath: this._extensionPath
 		}
 
 		return R.pipe(input, 

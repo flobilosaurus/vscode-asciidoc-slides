@@ -31,6 +31,7 @@ suite('Utils Test Suite', () => {
     const convertInput : AsciidocExtensionPath = {
         asciidocText,
         extensionPath: '.',
+        localResourceBaseUri: vscode.Uri.file('.'),
         scriptUris: [vscode.Uri.file('js/reveal.js')],
         stylesheetUris: [vscode.Uri.file('css/style.css')],
     }

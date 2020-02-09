@@ -13,3 +13,7 @@ some text
 == Slide Two
 
 test
+
+== Slide Three
+
+image::media/morpheus.jpg[]
