@@ -91,12 +91,12 @@ suite('Utils Test Suite', () => {
 	})
 
 	test('getCurrentSlideNumbers should calculate correct hSlideNumbers', async () => {
-		const lineNumbers = getCurrentSlideNumbers(asciidocText, 2)
+		const lineNumbers = getCurrentSlideNumbers(asciidocText, 3)
 		expect(lineNumbers).to.deep.equal({ hSlideNumber: 0, vSlideNumber: 0 })
 	})
 
 	test('getCurrentSlideNumbers should calculate correct vSlideNumbers', async () => {
-		const lineNumbers = getCurrentSlideNumbers(asciidocText, 7)
+		const lineNumbers = getCurrentSlideNumbers(asciidocText, 8)
 		expect(lineNumbers).to.deep.equal({ hSlideNumber: 0, vSlideNumber: 2 })
 	})
 })
