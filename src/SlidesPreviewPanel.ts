@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path'
 import * as R from 'remeda'
 
-import {generatePreviewHtml, convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addStyles, addScripts, getCurrentSlideNumbers, extractTheme} from './utils'
+import {generatePreviewHtml, convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addStyles, addScripts, getCurrentSlideNumbers, extractThemes} from './utils'
 
 export class SlidesPreviewPanel {
 	public static currentPanel: SlidesPreviewPanel | undefined;
@@ -15,6 +15,7 @@ export class SlidesPreviewPanel {
 	private _disposables: vscode.Disposable[] = [];
 	private styleUris : Array<vscode.Uri>
 	private scriptUris : Array<vscode.Uri>
+	private dependencyScriptUris: Array<vscode.Uri>
 
 	public static createOrShow(extensionPath: string) {
 
@@ -66,6 +67,10 @@ export class SlidesPreviewPanel {
 			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'js', 'reveal.js')
 		]
 
+		this.dependencyScriptUris = [
+			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'plugin', 'highlight', 'highlight.js')
+		]
+
 		vscode.workspace.onDidSaveTextDocument(this.onSaveBaseDocument, this, this._disposables)
 		
 		this._update();
@@ -114,12 +119,13 @@ export class SlidesPreviewPanel {
         if(this._baseEditor) {
             asciidocText = this._baseEditor.document.getText()
 		}
-		
+
 		const input : AsciidocExtensionPath = {
 			asciidocText,
 			extensionPath: this._extensionPath,
 			localResourceBaseUri: this.getPathAsWebviewUri(this._baseEditor.document.fileName),
-			stylesheetUris: [...this.styleUris, this.getThemeUri(asciidocText)],
+			dependencyScriptUris: this.dependencyScriptUris,
+			stylesheetUris: [...this.styleUris, ...this.getThemeUris(asciidocText)],
 			scriptUris: this.scriptUris,
 		}
         
@@ -130,7 +136,11 @@ export class SlidesPreviewPanel {
 			generatePreviewHtml)
 	}
 	
-	private getThemeUri(asciidocText: string) : vscode.Uri {
-		return this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'css', 'theme', `${extractTheme(asciidocText)}.css`)    
+	private getThemeUris(asciidocText: string) : Array<vscode.Uri> {
+		const themes = extractThemes(asciidocText)
+		return [
+			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'css', 'theme', `${themes.revealjs}.css`),
+			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'lib', 'css', `${themes.highlightjs}.css`) 
+		]
 	}
 }

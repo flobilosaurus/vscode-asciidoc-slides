@@ -1,4 +1,6 @@
 :revealjs_theme: moon
+:source-highlighter: highlightjs
+:highlightjs-theme: monokai
 = Title Slide
 
 == Slide One
@@ -18,3 +20,14 @@ test
 == Slide Three
 
 image::media/morpheus.jpg[]
+
+== Source Code
+
+[source, clojure]
+----
+(def lazy-fib
+  (concat
+   [0 1]
+   ((fn rfib [a b]
+        (lazy-cons (+ a b) (rfib b (+ a b)))) 0 1)))
+----

@@ -17,7 +17,8 @@ export interface AsciidocExtensionPath {
     asciidocText: string,
     extensionPath: string,
     localResourceBaseUri: vscode.Uri,
-    scriptUris: Array<vscode.Uri>
+    scriptUris: Array<vscode.Uri>,
+    dependencyScriptUris: Array<vscode.Uri>,
     stylesheetUris: Array<vscode.Uri>
 }
 
@@ -44,11 +45,20 @@ export interface AsciidocDocument {
     }
 }
 
-export function extractTheme(asciidocText: string) : string {
-    const doc = asciidoctor.load(asciidocText, { 'safe': 'safe' })
-    const theme = doc.attributes.$$smap['revealjs_theme'] || 'night'
+export interface AsciidocThemes {
+    revealjs: string,
+    highlightjs: string
+}
 
-    return theme
+export function extractThemes(asciidocText: string) : AsciidocThemes {
+    const doc = asciidoctor.load(asciidocText, { 'safe': 'safe' })
+    const revealjs = doc.attributes.$$smap['revealjs_theme'] || 'night'
+    const highlightjs = doc.attributes.$$smap['highlightjs-theme'] || 'monokai'
+
+    return {
+        revealjs,
+        highlightjs
+    }
 }
 
 export function convertAsciidocToRevealJsHtml(input: AsciidocExtensionPath) : AsciidocExtensionPathSlidesHtml {
@@ -87,7 +97,10 @@ export function addScripts(input: AsciidocExtensionPathSlidesHtml) : AsciidocExt
         Reveal.initialize({
             controls: true,
             progress: true,
-            display: 'block'
+            display: 'block',
+            dependencies: [
+                ${input.dependencyScriptUris.map(uri => '{ src: "'+ uri +'" }').join('\n')}
+            ]
         });
     </script>
     `

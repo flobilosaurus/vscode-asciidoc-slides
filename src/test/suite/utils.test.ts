@@ -2,12 +2,14 @@ import * as htmlValidator from 'html-validator'
 import { expect } from 'chai'
 import * as R from 'remeda'
 
-import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml, addStyles, generatePreviewHtml, getCurrentSlideNumbers, extractTheme } from '../../utils'
+import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml, addStyles, generatePreviewHtml, getCurrentSlideNumbers, extractThemes } from '../../utils'
 import * as vscode from 'vscode'
 import HtmlValidator = require('html-validator')
 
 const asciidocText = `
 :revealjs_theme: moon
+:source-highlighter: highlightjs
+:highlightjs-theme: zenburn
 = Title
 
 == Slide 1
@@ -34,6 +36,7 @@ suite('Utils Test Suite', () => {
         extensionPath: '.',
         localResourceBaseUri: vscode.Uri.file('.'),
         scriptUris: [vscode.Uri.file('js/reveal.js')],
+        dependencyScriptUris: [vscode.Uri.file('plugin/highlight/highlight.js')],
         stylesheetUris: [vscode.Uri.file('css/style.css')],
     }
 
@@ -46,8 +49,9 @@ suite('Utils Test Suite', () => {
     const generatePreviewHtmlInput = R.addProp(addStylesInput, 'stylesHtml', '<link rel="stylesheet" href="css/style.css">');
 
     test('extractTheme works as expected', async () => {
-		const theme = extractTheme(asciidocText)
-		expect(theme).to.equal('moon')
+		const result = extractThemes(asciidocText)
+        expect(result.revealjs).to.equal('moon')
+        expect(result.highlightjs).to.equal('zenburn')
     })
     
 	test('convertAsciidocToRevealJsHtml should produce valid Html', async () => {
@@ -69,7 +73,8 @@ suite('Utils Test Suite', () => {
             isFragment: true
 		}
 		
-		await validate(options)
+        await validate(options)
+        expect(result.scriptsHtml).to.contain(`dependencies: [\n                { src: "file:///plugin/highlight/highlight.js" }`)
     })
 
     test('addStyles should produce valid Html', async () => {
@@ -99,12 +104,12 @@ suite('Utils Test Suite', () => {
 	})
 
 	test('getCurrentSlideNumbers should calculate correct hSlideNumbers', async () => {
-		const lineNumbers = getCurrentSlideNumbers(asciidocText, 4)
+		const lineNumbers = getCurrentSlideNumbers(asciidocText, 6)
 		expect(lineNumbers).to.deep.equal({ hSlideNumber: 0, vSlideNumber: 0 })
 	})
 
 	test('getCurrentSlideNumbers should calculate correct vSlideNumbers', async () => {
-		const lineNumbers = getCurrentSlideNumbers(asciidocText, 9)
+		const lineNumbers = getCurrentSlideNumbers(asciidocText, 11)
 		expect(lineNumbers).to.deep.equal({ hSlideNumber: 0, vSlideNumber: 2 })
     })
 })
