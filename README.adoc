@@ -1,0 +1,12 @@
+= vscode asciidoc slides 
+
+Visual Studio Code extension to create https://github.com/hakimel/reveal.js[reveal.js] slides via asciidoc documents.
+
+== Features
+
+== Slide Preview Panel 
+==== [CMD + Shift + P] __Asciidoc Slides: Show Slide Preview Beside__
+
+* Shows reveal.js slides of asciidoc document beside it.
+* Preview is updated on every save of base document.
+* Preview is scrolled to the slide of cursor on every save of base document.
