@@ -13,30 +13,24 @@ const asciidoctor = ((<any>global).Opal && (<any>global).Opal.Asciidoctor) || re
 const asciidoctorRevealjs = require('@asciidoctor/reveal.js')
 asciidoctorRevealjs.register()
 
-export interface AsciidocExtensionPath {
+export interface AsciidocText {
     asciidocText: string,
-    extensionPath: string,
     localResourceBaseUri: vscode.Uri,
     scriptUris: Array<vscode.Uri>,
     dependencyScriptUris: Array<vscode.Uri>,
     stylesheetUris: Array<vscode.Uri>
 }
 
-export interface AsciidocExtensionPathSlidesHtml extends AsciidocExtensionPath {
+export interface AsciidocTextWithHtml extends AsciidocText {
     slidesHtml: string
 }
 
-export interface AsciidocExtensionPathSlidesHtmlWithScripts extends AsciidocExtensionPathSlidesHtml {
+export interface AsciidocTextWithHtmlWithScripts extends AsciidocTextWithHtml {
     scriptsHtml: string
 }
 
-export interface AsciidocExtensionPathSlidesHtmlWithScriptsAndStyles extends AsciidocExtensionPathSlidesHtmlWithScripts {
+export interface AsciidocTextWithHtmlWithScriptsAndStyles extends AsciidocTextWithHtmlWithScripts {
     stylesHtml: string
-}
-
-export interface HeadIncludes {
-    stylesheets: Array<vscode.Uri>,
-    scripts: Array<vscode.Uri>
 }
 
 export interface AsciidocDocument {
@@ -61,7 +55,7 @@ export function extractThemes(asciidocText: string) : AsciidocThemes {
     }
 }
 
-export function convertAsciidocToRevealJsHtml(input: AsciidocExtensionPath) : AsciidocExtensionPathSlidesHtml {
+export function convertAsciidocToRevealJsHtml(input: AsciidocText) : AsciidocTextWithHtml {
     var options = { backend: 'revealjs' }
     const sections = asciidoctor.convert(input.asciidocText, options)
     const revealJsSlides = `
@@ -75,7 +69,7 @@ export function convertAsciidocToRevealJsHtml(input: AsciidocExtensionPath) : As
     return R.addProp(input, 'slidesHtml', revealJsSlides)
 }
 
-export function addScripts(input: AsciidocExtensionPathSlidesHtml) : AsciidocExtensionPathSlidesHtmlWithScripts {
+export function addScripts(input: AsciidocTextWithHtml) : AsciidocTextWithHtmlWithScripts {
     const scriptsHtml = `
     <script>
     (function () { 
@@ -107,14 +101,14 @@ export function addScripts(input: AsciidocExtensionPathSlidesHtml) : AsciidocExt
     return R.addProp(input, 'scriptsHtml', scriptsHtml)
 }
 
-export function addStyles (input: AsciidocExtensionPathSlidesHtmlWithScripts) : AsciidocExtensionPathSlidesHtmlWithScriptsAndStyles {
+export function addStyles (input: AsciidocTextWithHtmlWithScripts) : AsciidocTextWithHtmlWithScriptsAndStyles {
     const stylesHtml = R.map(input.stylesheetUris, uri => '<link rel="stylesheet" href="' + uri + '">').join("\n")
 
     return R.addProp(input, 'stylesHtml', stylesHtml)
 }
 
-export function generatePreviewHtml (input: AsciidocExtensionPathSlidesHtmlWithScriptsAndStyles) : string {
-    const previewHtml = `
+export function generateHtml (input: AsciidocTextWithHtmlWithScriptsAndStyles) : string {
+    const html = `
     <!doctype html>
     <html>
         <head>
@@ -129,7 +123,7 @@ export function generatePreviewHtml (input: AsciidocExtensionPathSlidesHtmlWithS
             ${input.scriptsHtml}
         </body>
     </html>`;
-    return previewHtml
+    return html
 }
 
 export function getCurrentSlideNumbers (content: string, line : number) : {hSlideNumber: number, vSlideNumber: number} | null {
@@ -151,4 +145,3 @@ export function getCurrentSlideNumbers (content: string, line : number) : {hSlid
     }
     return null
 }
-

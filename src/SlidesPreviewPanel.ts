@@ -2,7 +2,8 @@ import * as vscode from 'vscode';
 import * as path from 'path'
 import * as R from 'remeda'
 
-import {generatePreviewHtml, convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addStyles, addScripts, getCurrentSlideNumbers, extractThemes} from './utils'
+import {generateHtml, convertAsciidocToRevealJsHtml, addStyles, addScripts, getCurrentSlideNumbers, extractThemes, AsciidocText} from './utils'
+import { DEPENDENCY_SCRIPTS, STYLES, getThemeStyles, SCRIPTS } from './path-collection';
 
 export class SlidesPreviewPanel {
 	public static currentPanel: SlidesPreviewPanel | undefined;
@@ -13,9 +14,6 @@ export class SlidesPreviewPanel {
     private readonly _extensionPath: string;
     private _baseEditor: vscode.TextEditor
 	private _disposables: vscode.Disposable[] = [];
-	private styleUris : Array<vscode.Uri>
-	private scriptUris : Array<vscode.Uri>
-	private dependencyScriptUris: Array<vscode.Uri>
 
 	public static createOrShow(extensionPath: string) {
 
@@ -58,19 +56,6 @@ export class SlidesPreviewPanel {
 		this._extensionPath = extensionPath;
 		this._baseEditor = baseEditor
 
-		this.styleUris = [
-			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'css', 'reveal.css'),
-			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'css', 'theme', 'night.css')
-		]
-		
-		this.scriptUris = [
-			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'js', 'reveal.js')
-		]
-
-		this.dependencyScriptUris = [
-			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'plugin', 'highlight', 'highlight.js')
-		]
-
 		vscode.workspace.onDidSaveTextDocument(this.onSaveBaseDocument, this, this._disposables)
 		
 		this._update();
@@ -109,10 +94,6 @@ export class SlidesPreviewPanel {
 	private _update() {
         this._panel.webview.html = this._getHtmlForWebview()
 	}
-
-	private getPathAsWebviewUri(...paths : string[]) : vscode.Uri {
-		return this._panel.webview.asWebviewUri(vscode.Uri.file(path.join(...paths)))
-	}
 	
 	private _getHtmlForWebview() {
         let asciidocText = ""
@@ -120,27 +101,21 @@ export class SlidesPreviewPanel {
             asciidocText = this._baseEditor.document.getText()
 		}
 
-		const input : AsciidocExtensionPath = {
+		const themes = extractThemes(asciidocText)
+		const prependExtensionPath = (filePath: string) => path.join(this._extensionPath, filePath)
+		const toWebviewUri = (filePath: string) => this._panel.webview.asWebviewUri(vscode.Uri.file(path.join(filePath)))
+		const input : AsciidocText = {
 			asciidocText,
-			extensionPath: this._extensionPath,
-			localResourceBaseUri: this.getPathAsWebviewUri(this._baseEditor.document.fileName),
-			dependencyScriptUris: this.dependencyScriptUris,
-			stylesheetUris: [...this.styleUris, ...this.getThemeUris(asciidocText)],
-			scriptUris: this.scriptUris,
+			localResourceBaseUri: toWebviewUri(this._baseEditor.document.fileName),
+			dependencyScriptUris: R.map(R.map(DEPENDENCY_SCRIPTS, prependExtensionPath), toWebviewUri),
+			stylesheetUris: R.map(R.map([...STYLES, ...getThemeStyles(themes)], prependExtensionPath), toWebviewUri),
+			scriptUris: R.map(R.map(SCRIPTS, prependExtensionPath), toWebviewUri),
 		}
         
 		return R.pipe(input,
 			convertAsciidocToRevealJsHtml,
 			addScripts,
 			addStyles,
-			generatePreviewHtml)
-	}
-	
-	private getThemeUris(asciidocText: string) : Array<vscode.Uri> {
-		const themes = extractThemes(asciidocText)
-		return [
-			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'css', 'theme', `${themes.revealjs}.css`),
-			this.getPathAsWebviewUri(this._extensionPath, 'node_modules', 'reveal.js', 'lib', 'css', `${themes.highlightjs}.css`) 
-		]
+			generateHtml)
 	}
 }

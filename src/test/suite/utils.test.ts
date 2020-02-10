@@ -2,7 +2,7 @@ import * as htmlValidator from 'html-validator'
 import { expect } from 'chai'
 import * as R from 'remeda'
 
-import { convertAsciidocToRevealJsHtml, AsciidocExtensionPath, addScripts, AsciidocExtensionPathSlidesHtmlWithScripts, AsciidocExtensionPathSlidesHtml, addStyles, generatePreviewHtml, getCurrentSlideNumbers, extractThemes } from '../../utils'
+import { convertAsciidocToRevealJsHtml, AsciidocText, addScripts, AsciidocTextWithHtmlWithScripts, AsciidocTextWithHtml, addStyles, generateHtml, getCurrentSlideNumbers, extractThemes } from '../../utils'
 import * as vscode from 'vscode'
 import HtmlValidator = require('html-validator')
 
@@ -31,16 +31,13 @@ async function validate (options: HtmlValidator.OptionsForHtmlFileAsValidationTa
 
 suite('Utils Test Suite', () => {
 
-    const extractThemeInput : AsciidocExtensionPath = {
+    const convertInput : AsciidocText = {
         asciidocText,
-        extensionPath: '.',
         localResourceBaseUri: vscode.Uri.file('.'),
         scriptUris: [vscode.Uri.file('js/reveal.js')],
         dependencyScriptUris: [vscode.Uri.file('plugin/highlight/highlight.js')],
         stylesheetUris: [vscode.Uri.file('css/style.css')],
     }
-
-    const convertInput = R.addProp(extractThemeInput, 'theme', 'night');
 
     const addScriptsInput = R.addProp(convertInput, 'slidesHtml', '');
 
@@ -89,7 +86,7 @@ suite('Utils Test Suite', () => {
     })
     
     test('generatePreviewHtml should produce valid Html', async () => {
-        const result = generatePreviewHtml(generatePreviewHtmlInput)
+        const result = generateHtml(generatePreviewHtmlInput)
 
 		const options = {
             data: result
