@@ -1,6 +1,5 @@
-import * as R from 'remeda';
-import * as vscode from 'vscode';
-import * as path from 'path'
+import * as cheerio from 'cheerio'
+import { createLocalResourceBaseHtmlTag, SCROLL_TO_SLIDE_LISTENER_SCRIPT } from './/html-helper'
 
 /**
  * Check if Opal has been loaded already, if not, require through asciidoctor.js
@@ -13,117 +12,29 @@ const asciidoctor = ((<any>global).Opal && (<any>global).Opal.Asciidoctor) || re
 const asciidoctorRevealjs = require('@asciidoctor/reveal.js')
 asciidoctorRevealjs.register()
 
-export interface AsciidocText {
-    asciidocText: string,
-    localResourceBaseUri: vscode.Uri,
-    scriptUris: Array<vscode.Uri>,
-    dependencyScriptUris: Array<vscode.Uri>,
-    stylesheetUris: Array<vscode.Uri>
-}
-
-export interface AsciidocTextWithHtml extends AsciidocText {
-    slidesHtml: string
-}
-
-export interface AsciidocTextWithHtmlWithScripts extends AsciidocTextWithHtml {
-    scriptsHtml: string
-}
-
-export interface AsciidocTextWithHtmlWithScriptsAndStyles extends AsciidocTextWithHtmlWithScripts {
-    stylesHtml: string
-}
-
-export interface AsciidocDocument {
-    attributes: {
-        $$smap: any
+export function createRevealJsHtml (asciidocText: string, pathCompleter: (path: string) => string, resourceBasePath: string) {
+    const revealsPathOfAsciidoctor = 'node_modules/@asciidoctor/reveal.js/node_modules/reveal.js'
+    const attributes = {
+        icons: "font",
+        'source-highlighter': 'highlightjs',
+        highlightjsdir: pathCompleter(`${revealsPathOfAsciidoctor}/plugin/highlight`),
+        revealjsdir: pathCompleter(revealsPathOfAsciidoctor)
     }
-}
-
-export interface AsciidocThemes {
-    revealjs: string,
-    highlightjs: string
-}
-
-export function extractThemes(asciidocText: string) : AsciidocThemes {
-    const doc = asciidoctor.load(asciidocText, { 'safe': 'safe' })
-    const revealjs = doc.attributes.$$smap['revealjs_theme'] || 'night'
-    const highlightjs = doc.attributes.$$smap['highlightjs-theme'] || 'monokai'
-
-    return {
-        revealjs,
-        highlightjs
+    const opts = { 
+        backend: 'revealjs',
+        header_footer: true, 
+        attributes
     }
-}
-
-export function convertAsciidocToRevealJsHtml(input: AsciidocText) : AsciidocTextWithHtml {
-    var options = { backend: 'revealjs' }
-    const sections = asciidoctor.convert(input.asciidocText, options)
-    const revealJsSlides = `
-
-        <div class="reveal">
-            <div class="slides">
-                ${sections}
-            </div>
-        </div>
-    `
-    return R.addProp(input, 'slidesHtml', revealJsSlides)
-}
-
-export function addScripts(input: AsciidocTextWithHtml) : AsciidocTextWithHtmlWithScripts {
-    const scriptsHtml = `
-    <script>
-    (function () { 
-        const vscode = acquireVsCodeApi();
-        addEventListener('message', event => {
-            const message = event.data;
-            switch (message.command) {
-                case 'gotoSlide':
-                    Reveal.slide( message.hSlideNumber, message.vSlideNumber );
-                    break;
-            }
-        });
-        
-    })()
-    </script>
-    ${input.scriptUris.map(uri => '<script src="' + uri + '"></script>').join("\n")}
+    const completeRevealJsHtml =  asciidoctor.convert(asciidocText, opts) as string
+    const completeRevealJsHtmlWithResourceBase = injectIntoHtml(completeRevealJsHtml, "head", createLocalResourceBaseHtmlTag(resourceBasePath))
     
-    <script>
-        Reveal.initialize({
-            controls: true,
-            progress: true,
-            display: 'block',
-            dependencies: [
-                ${input.dependencyScriptUris.map(uri => '{ src: "'+ uri +'" }').join('\n')}
-            ]
-        });
-    </script>
-    `
-    return R.addProp(input, 'scriptsHtml', scriptsHtml)
+    return injectIntoHtml(completeRevealJsHtmlWithResourceBase, 'body', SCROLL_TO_SLIDE_LISTENER_SCRIPT)
 }
 
-export function addStyles (input: AsciidocTextWithHtmlWithScripts) : AsciidocTextWithHtmlWithScriptsAndStyles {
-    const stylesHtml = R.map(input.stylesheetUris, uri => '<link rel="stylesheet" href="' + uri + '">').join("\n")
-
-    return R.addProp(input, 'stylesHtml', stylesHtml)
-}
-
-export function generateHtml (input: AsciidocTextWithHtmlWithScriptsAndStyles) : string {
-    const html = `
-    <!doctype html>
-    <html>
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>asciidoc presenter</title>
-            <base href="${input.localResourceBaseUri}">
-            ${input.stylesHtml}
-        </head>
-        <body>
-            ${input.slidesHtml}
-            ${input.scriptsHtml}
-        </body>
-    </html>`;
-    return html
+export function injectIntoHtml(html: string, parentNodeSelector: string, toInject: string) {
+    const $ = cheerio.load(html)
+    $(parentNodeSelector).append(toInject)
+    return $.html()
 }
 
 export function getCurrentSlideNumbers (content: string, line : number) : {hSlideNumber: number, vSlideNumber: number} | null {
@@ -133,7 +44,7 @@ export function getCurrentSlideNumbers (content: string, line : number) : {hSlid
         let hSlideNumber = -1
         let vSlideNumber = 0
         linesInRange.forEach(l => {
-            if(l.startsWith('== ')) {
+            if(l.startsWith('== ') || l.startsWith('= ')) {
                 hSlideNumber++
                 vSlideNumber = 0
             }

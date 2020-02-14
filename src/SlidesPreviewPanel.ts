@@ -1,9 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path'
-import * as R from 'remeda'
 
-import {generateHtml, convertAsciidocToRevealJsHtml, addStyles, addScripts, getCurrentSlideNumbers, extractThemes, AsciidocText} from './utils'
-import { DEPENDENCY_SCRIPTS, STYLES, getThemeStyles, SCRIPTS } from './path-collection';
+import { getCurrentSlideNumbers, createRevealJsHtml} from './utils'
 
 export class SlidesPreviewPanel {
 	public static currentPanel: SlidesPreviewPanel | undefined;
@@ -56,16 +54,11 @@ export class SlidesPreviewPanel {
 		this._extensionPath = extensionPath;
 		this._baseEditor = baseEditor
 
-		vscode.workspace.onDidSaveTextDocument(this.onSaveBaseDocument, this, this._disposables)
+		vscode.workspace.onDidSaveTextDocument(this._update, this, this._disposables)
 		
 		this._update();
 
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
-	}
-
-	private onSaveBaseDocument() {
-		this._update()
-		this.goToCurrentSlide()
 	}
 
 	public goToCurrentSlide () {
@@ -91,31 +84,16 @@ export class SlidesPreviewPanel {
 		}
 	}
 
-	private _update() {
-        this._panel.webview.html = this._getHtmlForWebview()
+	private async _update() {
+		this._panel.webview.html = await this._getHtmlForWebview()
+		this.goToCurrentSlide()
 	}
 	
-	private _getHtmlForWebview() {
-        let asciidocText = ""
-        if(this._baseEditor) {
-            asciidocText = this._baseEditor.document.getText()
-		}
+	private async _getHtmlForWebview() {
+		let asciidocText = this._baseEditor.document.getText()
 
-		const themes = extractThemes(asciidocText)
-		const prependExtensionPath = (filePath: string) => path.join(this._extensionPath, filePath)
-		const toWebviewUri = (filePath: string) => this._panel.webview.asWebviewUri(vscode.Uri.file(path.join(filePath)))
-		const input : AsciidocText = {
-			asciidocText,
-			localResourceBaseUri: toWebviewUri(this._baseEditor.document.fileName),
-			dependencyScriptUris: R.map(R.map(DEPENDENCY_SCRIPTS, prependExtensionPath), toWebviewUri),
-			stylesheetUris: R.map(R.map([...STYLES, ...getThemeStyles(themes)], prependExtensionPath), toWebviewUri),
-			scriptUris: R.map(R.map(SCRIPTS, prependExtensionPath), toWebviewUri),
-		}
-        
-		return R.pipe(input,
-			convertAsciidocToRevealJsHtml,
-			addScripts,
-			addStyles,
-			generateHtml)
+		const pathCompleter = (inputPath: string) => this._panel.webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionPath, inputPath))).toString()
+		const resourceBasePath = this._panel.webview.asWebviewUri(vscode.Uri.file(path.dirname(this._baseEditor.document.fileName))) + "/"
+		return await createRevealJsHtml(asciidocText, pathCompleter, resourceBasePath)
 	}
 }
