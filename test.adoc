@@ -1,27 +1,112 @@
+
 :revealjs_theme: moon
-:source-highlighter: highlightjs
-:highlightjs-theme: monokai
-= Title Slide
+= asciidoc slides extension
 
-== Slide One
+== Images
 
-* Foo asdf
-* Bar asdf asdf
-* World
+[source, asciidoc]
+--
+image::media/morpheus.jpg[]
+--
 
-=== Vertical Slide
-
-some text
-
-== Slide Two
-
-test
-
-== Slide Three
+results in:
 
 image::media/morpheus.jpg[]
 
+=== Background Images
+
+[source, asciidoc]
+--
+image::media/background.jpg[background, size=cover]
+--
+
+results in:
+
+image::media/background.jpg[background, size=cover]
+ß
+=== Background Gifs
+
+[source, asciidoc]
+--
+image::media/suprise.gif[background, size=cover]
+--
+
+results in:
+
+image::media/suprise.gif[background, size=cover]
+
+[background-video="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",options="loop,muted"]
+=== Background Videos
+
+[source, asciidoc]
+--
+[background-video="https://video.de/my.mp4",options="loop,muted"]
+--
+
+== Lists
+
+[source, asciidoc]
+--
+* Im
+* a
+* List
+--
+
+results in:
+
+* Im
+* a
+* List
+
+=== Lists
+
+[source, asciidoc]
+--
+. Step 1
+. Step 2
+.. Step 2a
+.. Step 2b
+. Step 3
+--
+
+results in:
+
+. Step 1
+. Step 2
+.. Step 2a
+.. Step 2b
+. Step 3
+
+=== Descriptions
+
+[source, asciidoc]
+--
+first term:: definition of first term
+second term:: definition of second term
+--
+
+results in:
+
+first term:: definition of first term
+second term:: definition of second term
+
 == Source Code
+
+
+[source, asciidoc]
+--
+[source, clojure]
+----
+(def lazy-fib
+  (concat
+   [0 1]
+   ((fn rfib [a b]
+        (lazy-cons (+ a b) (rfib b (+ a b)))) 0 1)))
+----
+--
+
+results in
+
 
 [source, clojure]
 ----
@@ -31,3 +116,33 @@ image::media/morpheus.jpg[]
    ((fn rfib [a b]
         (lazy-cons (+ a b) (rfib b (+ a b)))) 0 1)))
 ----
+
+== Tables
+
+[source, asciidoc]
+--
+[%header, cols=2*]
+|===
+|Character
+|Seen in
+
+|Donald Duck
+|Mickey Mouse
+|===
+--
+
+results in:
+
+[%header, cols=2*]
+|===
+|Character
+|Seen in
+
+|Donald Duck
+|Mickey Mouse
+|===
+
+== Quotes
+
+[quote, Albert Einstein]
+A person who never made a mistake never tried anything new.
