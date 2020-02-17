@@ -2,7 +2,7 @@
 	"name": "vscode-asciidoc-slides",
 	"displayName": "vscode-asciidoc-slides",
 	"description": "",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.42.0"
 	},
@@ -10,14 +10,21 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:asciidocSlides.preview"
+		"onCommand:asciidocSlides.preview",
+		"onCommand:asciidocSlides.export"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
 				"command": "asciidocSlides.preview",
-				"title": "Asciidoc Slides: Show Slides Preview Beside"
+				"title": "Asciidoc Slides: Show Slides Preview Beside",
+				"category": "Asciidoc Slides"
+			},
+			{
+				"command": "asciidocSlides.export",
+				"title": "Asciidoc Slides: Export slides as Html file",
+				"category": "Asciidoc Slides"
 			}
 		]
 	},

@@ -94,6 +94,6 @@ export class SlidesPreviewPanel {
 
 		const pathCompleter = (inputPath: string) => this._panel.webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionPath, inputPath))).toString()
 		const resourceBasePath = this._panel.webview.asWebviewUri(vscode.Uri.file(path.dirname(this._baseEditor.document.fileName))) + "/"
-		return await createRevealJsHtml(asciidocText, pathCompleter, resourceBasePath)
+		return await createRevealJsHtml(asciidocText, pathCompleter, resourceBasePath, true)
 	}
 }

@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio'
 import { createLocalResourceBaseHtmlTag, SCROLL_TO_SLIDE_LISTENER_SCRIPT } from './/html-helper'
-
+import * as vscode from 'vscode'
+import {Asciidoctor} from 'asciidoctor/types/index'
 /**
  * Check if Opal has been loaded already, if not, require through asciidoctor.js
  * workaround to dont bridge opal runtime again because it will throw.
@@ -12,23 +13,42 @@ const asciidoctor = ((<any>global).Opal && (<any>global).Opal.Asciidoctor) || re
 const asciidoctorRevealjs = require('@asciidoctor/reveal.js')
 asciidoctorRevealjs.register()
 
-export function createRevealJsHtml (asciidocText: string, pathCompleter: (path: string) => string, resourceBasePath: string) {
-    const revealsPathOfAsciidoctor = 'node_modules/@asciidoctor/reveal.js/node_modules/reveal.js'
-    const attributes = {
-        icons: "font",
-        'source-highlighter': 'highlightjs',
-        highlightjsdir: pathCompleter(`${revealsPathOfAsciidoctor}/plugin/highlight`),
-        revealjsdir: pathCompleter(revealsPathOfAsciidoctor)
+const revealsPathOfAsciidoctor = 'node_modules/@asciidoctor/reveal.js/node_modules/reveal.js'
+
+export function getAttributes(asciidocText: string, pathCompleter: (path: string) => string, resourceBasePath: string) {
+    const doc = asciidoctor.load(asciidocText) as Asciidoctor.Document
+    
+    const imagesDir = doc.getAttribute("imagesdir")
+    const highlightjsDir = doc.getAttribute("highlightjsdir")
+    const revealjsdir = doc.getAttribute("revealjsdir")
+    const sourceHighlighter = doc.getAttribute("source-highlighter")
+    const icons = doc.getAttribute("icons")
+    
+    return {
+        icons: icons ? icons : "font",
+        'source-highlighter': sourceHighlighter ? sourceHighlighter : 'highlightjs',
+        imagesdir: imagesDir ? imagesDir : resourceBasePath,
+        highlightjsdir: highlightjsDir ? highlightjsDir : pathCompleter(`${revealsPathOfAsciidoctor}/plugin/highlight`),
+        revealjsdir: revealjsdir ? revealjsdir : pathCompleter(revealsPathOfAsciidoctor)
     }
+}
+
+export function createRevealJsHtml (asciidocText: string, pathCompleter: (path: string) => string, resourceBasePath: string, preview: boolean) {
+    
+    const attributes = getAttributes(asciidocText, pathCompleter, resourceBasePath)
     const opts = { 
         backend: 'revealjs',
         header_footer: true, 
         attributes
     }
     const completeRevealJsHtml =  asciidoctor.convert(asciidocText, opts) as string
-    const completeRevealJsHtmlWithResourceBase = injectIntoHtml(completeRevealJsHtml, "head", createLocalResourceBaseHtmlTag(resourceBasePath))
     
-    return injectIntoHtml(completeRevealJsHtmlWithResourceBase, 'body', SCROLL_TO_SLIDE_LISTENER_SCRIPT)
+    if(preview) {
+        const completeRevealJsHtmlWithResourceBase = injectIntoHtml(completeRevealJsHtml, "head", createLocalResourceBaseHtmlTag(resourceBasePath))
+        return injectIntoHtml(completeRevealJsHtmlWithResourceBase, 'body', SCROLL_TO_SLIDE_LISTENER_SCRIPT)
+    }
+
+    return completeRevealJsHtml
 }
 
 export function injectIntoHtml(html: string, parentNodeSelector: string, toInject: string) {
@@ -55,4 +75,8 @@ export function getCurrentSlideNumbers (content: string, line : number) : {hSlid
         return {hSlideNumber, vSlideNumber}
     }
     return null
+}
+
+export function showErrorMessage(message: string) {
+    vscode.window.showErrorMessage(message)
 }

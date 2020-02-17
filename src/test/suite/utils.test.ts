@@ -5,6 +5,7 @@ import { getCurrentSlideNumbers, injectIntoHtml, createRevealJsHtml} from '../..
 import * as vscode from 'vscode'
 import HtmlValidator = require('html-validator')
 import { fail, doesNotReject } from 'assert'
+import { SCROLL_TO_SLIDE_LISTENER_SCRIPT } from '../../html-helper'
 
 const asciidocText = `
 :revealjs_theme: moon
@@ -53,9 +54,10 @@ suite('Utils Test Suite', () => {
     test('createRevealJsHtml returns valid Html', async () => {
 		const pathCompleter = (inputPath: string) => 'some/prefix/' + inputPath
         const resourceBasePath = "./"
-        const revealJsHtml = createRevealJsHtml(asciidocText, pathCompleter, resourceBasePath)
+        const revealJsHtml = createRevealJsHtml(asciidocText, pathCompleter, resourceBasePath, true)
         const numErrors = await numberOfHtmlErrors(revealJsHtml)
         expect(numErrors).to.equal(0)
+        expect(revealJsHtml).to.have.string("acquireVsCodeApi()")
     }).timeout(4000);
 
     test('getCurrentSlideNumbers should return null when no content given', () => {
