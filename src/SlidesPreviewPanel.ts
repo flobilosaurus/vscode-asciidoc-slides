@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path'
 
-import { getCurrentSlideNumbers, createRevealJsHtml} from './utils'
+import { getCurrentSlideNumbers, createRevealJsHtml, showErrorMessage} from './utils'
 
 export class SlidesPreviewPanel {
 	public static currentPanel: SlidesPreviewPanel | undefined;
@@ -19,25 +19,30 @@ export class SlidesPreviewPanel {
 			? vscode.ViewColumn.Active
 			: undefined;
 
-		// If we already have a panel, show it.
 		if (SlidesPreviewPanel.currentPanel) {
 			SlidesPreviewPanel.currentPanel._panel.reveal(column);
 			return;
 		}
 
+		const baseEditor = vscode.window.activeTextEditor
+		if(!baseEditor) {
+			showErrorMessage("Call this command based on an asciidoc document.")
+			return;	
+		}
+
 		const panel = vscode.window.createWebviewPanel(
 			SlidesPreviewPanel.viewType,
-			'Asciidoc Slides Preview',
+			`Slide Preview: ${path.basename(baseEditor.document.fileName)}`,
 			vscode.ViewColumn.Beside,
 			{
 				enableScripts: true,
 			}
 		);
+
+		SlidesPreviewPanel.currentPanel = new SlidesPreviewPanel(panel, baseEditor, extensionPath);
+
 		
-		const baseEditor = vscode.window.activeTextEditor
-		if(baseEditor) {
-			SlidesPreviewPanel.currentPanel = new SlidesPreviewPanel(panel, baseEditor, extensionPath);
-		}
+
 	}
 
 	public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
