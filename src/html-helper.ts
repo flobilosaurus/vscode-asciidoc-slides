@@ -1,9 +1,13 @@
 export const SCROLL_TO_SLIDE_LISTENER_SCRIPT = `
 		<script>
 			(function () { 
-				const vscode = acquireVsCodeApi();
+                const vscode = acquireVsCodeApi();
+                vscode.postMessage({
+                    command: 'ready'
+                })
 				addEventListener('message', event => {
-					const message = event.data;
+                    const message = event.data;
+                    console.log("message", message)
 					switch (message.command) {
 						case 'gotoSlide':
 							Reveal.slide( message.hSlideNumber, message.vSlideNumber );

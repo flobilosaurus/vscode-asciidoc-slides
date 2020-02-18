@@ -40,9 +40,6 @@ export class SlidesPreviewPanel {
 		);
 
 		SlidesPreviewPanel.currentPanel = new SlidesPreviewPanel(panel, baseEditor, extensionPath);
-
-		
-
 	}
 
 	public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
@@ -91,6 +88,11 @@ export class SlidesPreviewPanel {
 
 	private async _update() {
 		this._panel.webview.html = await this._getHtmlForWebview()
+		this._panel.webview.onDidReceiveMessage(message => {
+			if(message.command === 'ready' ) {
+				this.goToCurrentSlide()
+			}
+		})
 		this.goToCurrentSlide()
 	}
 	
