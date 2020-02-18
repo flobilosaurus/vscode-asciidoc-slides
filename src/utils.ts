@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio'
+import * as path from 'path'
 import { createLocalResourceBaseHtmlTag, SCROLL_TO_SLIDE_LISTENER_SCRIPT } from './/html-helper'
 import * as vscode from 'vscode'
 import {Asciidoctor} from 'asciidoctor/types/index'
@@ -20,6 +21,7 @@ export function getAttributes(asciidocText: string, pathCompleter: (path: string
     
     const imagesDir = doc.getAttribute("imagesdir")
     const highlightjsDir = doc.getAttribute("highlightjsdir")
+    const givenHighlightJsThemePath = doc.getAttribute("highlightjs-theme")
     const revealjsdir = doc.getAttribute("revealjsdir")
     const sourceHighlighter = doc.getAttribute("source-highlighter")
     const icons = doc.getAttribute("icons")
@@ -29,6 +31,7 @@ export function getAttributes(asciidocText: string, pathCompleter: (path: string
         'source-highlighter': sourceHighlighter ? sourceHighlighter : 'highlightjs',
         imagesdir: imagesDir ? imagesDir : resourceBasePath,
         highlightjsdir: highlightjsDir ? highlightjsDir : pathCompleter(`${revealsPathOfAsciidoctor}/plugin/highlight`),
+        'highlightjs-theme': givenHighlightJsThemePath ? givenHighlightJsThemePath : pathCompleter(`${revealsPathOfAsciidoctor}/lib/css/zenburn.css`),
         revealjsdir: revealjsdir ? revealjsdir : pathCompleter(revealsPathOfAsciidoctor)
     }
 }
