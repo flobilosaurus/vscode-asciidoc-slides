@@ -15,6 +15,7 @@
 	"categories": [
 		"Other"
 	],
+	"icon": "media/icon.png",
 	"keywords": ["asciidoc", "reveal.js", "slides", "presentation"],
 	"activationEvents": [
 		"onCommand:asciidocSlides.preview",
