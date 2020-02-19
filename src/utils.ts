@@ -14,7 +14,7 @@ const asciidoctor = ((<any>global).Opal && (<any>global).Opal.Asciidoctor) || re
 const asciidoctorRevealjs = require('@asciidoctor/reveal.js')
 asciidoctorRevealjs.register()
 
-const revealsPathOfAsciidoctor = 'node_modules/@asciidoctor/reveal.js/node_modules/reveal.js'
+export const REVEALJS_PATH_OF_ASCIIDOCTOR = 'node_modules/@asciidoctor/reveal.js/node_modules/reveal.js'
 
 export function getAttributes(asciidocText: string, pathCompleter: (path: string) => string, resourceBasePath: string) {
     const doc = asciidoctor.load(asciidocText) as Asciidoctor.Document
@@ -30,9 +30,9 @@ export function getAttributes(asciidocText: string, pathCompleter: (path: string
         icons: icons ? icons : "font",
         'source-highlighter': sourceHighlighter ? sourceHighlighter : 'highlightjs',
         imagesdir: imagesDir ? imagesDir : resourceBasePath,
-        highlightjsdir: highlightjsDir ? highlightjsDir : pathCompleter(`${revealsPathOfAsciidoctor}/plugin/highlight`),
-        'highlightjs-theme': givenHighlightJsThemePath ? givenHighlightJsThemePath : pathCompleter(`${revealsPathOfAsciidoctor}/lib/css/zenburn.css`),
-        revealjsdir: revealjsdir ? revealjsdir : pathCompleter(revealsPathOfAsciidoctor)
+        highlightjsdir: highlightjsDir ? highlightjsDir : pathCompleter(`${REVEALJS_PATH_OF_ASCIIDOCTOR}/plugin/highlight`),
+        'highlightjs-theme': givenHighlightJsThemePath ? givenHighlightJsThemePath : pathCompleter(`${REVEALJS_PATH_OF_ASCIIDOCTOR}/lib/css/zenburn.css`),
+        revealjsdir: revealjsdir ? revealjsdir : pathCompleter(REVEALJS_PATH_OF_ASCIIDOCTOR)
     }
 }
 

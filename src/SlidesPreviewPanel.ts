@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path'
 
-import { getCurrentSlideNumbers, createRevealJsHtml, showErrorMessage} from './utils'
+import { getCurrentSlideNumbers, createRevealJsHtml, showErrorMessage, REVEALJS_PATH_OF_ASCIIDOCTOR} from './utils'
 
 export class SlidesPreviewPanel {
 	public static currentPanel: SlidesPreviewPanel | undefined;
@@ -30,12 +30,15 @@ export class SlidesPreviewPanel {
 			return;	
 		}
 
+		const revealJsPath = vscode.Uri.file(path.join(extensionPath, REVEALJS_PATH_OF_ASCIIDOCTOR))
+		const localResourceBasePath = vscode.Uri.file(path.dirname(baseEditor.document.fileName))
 		const panel = vscode.window.createWebviewPanel(
 			SlidesPreviewPanel.viewType,
 			`Slide Preview: ${path.basename(baseEditor.document.fileName)}`,
 			vscode.ViewColumn.Beside,
 			{
 				enableScripts: true,
+				localResourceRoots: [revealJsPath, localResourceBasePath]
 			}
 		);
 
