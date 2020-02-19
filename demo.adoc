@@ -23,7 +23,7 @@ image::media/background.jpg[background, size=cover]
 results in:
 
 image::media/background.jpg[background, size=cover]
-ß
+
 === Background Gifs
 
 [source, asciidoc]

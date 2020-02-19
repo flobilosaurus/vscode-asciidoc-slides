@@ -1,14 +1,21 @@
 {
 	"name": "vscode-asciidoc-slides",
-	"displayName": "vscode-asciidoc-slides",
-	"description": "",
-	"version": "0.1.0",
+	"displayName": "AsciiDoc Slides",
+	"description": "Create a presentation via AsciiDoc",
+	"version": "0.1.1",
+	"publisher": "flobilosaurus",
+	"repository": { 
+		"type" : "git",
+		"url" : "https://github.com/flobilosaurus/vscode-asciidoc-slides.git"
+	},
+	"license": "MIT",
 	"engines": {
 		"vscode": "^1.42.0"
 	},
 	"categories": [
 		"Other"
 	],
+	"keywords": ["asciidoc", "reveal.js", "slides", "presentation"],
 	"activationEvents": [
 		"onCommand:asciidocSlides.preview",
 		"onCommand:asciidocSlides.export"
@@ -29,11 +36,11 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "yarn run compile",
+		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
 		"lint": "eslint src --ext ts",
 		"watch": "tsc -watch -p ./",
-		"pretest": "yarn run compile && yarn run lint",
+		"pretest": "npm run compile && npm run lint",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
