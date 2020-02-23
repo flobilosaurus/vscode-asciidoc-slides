@@ -42,6 +42,7 @@ export class SlidesPreviewPanel {
 			}
 		);
 
+		panel.iconPath = vscode.Uri.file(path.join(extensionPath, 'media/icon.png'))
 		SlidesPreviewPanel.currentPanel = new SlidesPreviewPanel(panel, baseEditor, extensionPath);
 	}
 
