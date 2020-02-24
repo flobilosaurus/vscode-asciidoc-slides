@@ -2,11 +2,11 @@
 	"name": "vscode-asciidoc-slides",
 	"displayName": "AsciiDoc Slides",
 	"description": "Create a presentation via AsciiDoc",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"publisher": "flobilosaurus",
-	"repository": { 
-		"type" : "git",
-		"url" : "https://github.com/flobilosaurus/vscode-asciidoc-slides.git"
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/flobilosaurus/vscode-asciidoc-slides.git"
 	},
 	"license": "MIT",
 	"engines": {
@@ -16,7 +16,12 @@
 		"Other"
 	],
 	"icon": "media/icon.png",
-	"keywords": ["asciidoc", "reveal.js", "slides", "presentation"],
+	"keywords": [
+		"asciidoc",
+		"reveal.js",
+		"slides",
+		"presentation"
+	],
 	"activationEvents": [
 		"onCommand:asciidocSlides.preview",
 		"onCommand:asciidocSlides.export"
@@ -60,7 +65,7 @@
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
-		"@asciidoctor/reveal.js": "^3.1.0",
+		"@asciidoctor/reveal.js": "^4.0.1",
 		"@types/chai": "^4.2.8",
 		"@types/cheerio": "^0.22.16",
 		"asciidoctor": "^2.1.1",

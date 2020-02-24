@@ -14,14 +14,12 @@ const asciidoctor = ((<any>global).Opal && (<any>global).Opal.Asciidoctor) || re
 const asciidoctorRevealjs = require('@asciidoctor/reveal.js')
 asciidoctorRevealjs.register()
 
-export const REVEALJS_PATH_OF_ASCIIDOCTOR = 'node_modules/@asciidoctor/reveal.js/node_modules/reveal.js'
+export const REVEALJS_PATH = 'node_modules/reveal.js'
 
 export function getAttributes(asciidocText: string, pathCompleter: (path: string) => string, resourceBasePath: string) {
     const doc = asciidoctor.load(asciidocText) as Asciidoctor.Document
     
     const imagesDir = doc.getAttribute("imagesdir")
-    const highlightjsDir = doc.getAttribute("highlightjsdir")
-    const givenHighlightJsThemePath = doc.getAttribute("highlightjs-theme")
     const revealjsdir = doc.getAttribute("revealjsdir")
     const sourceHighlighter = doc.getAttribute("source-highlighter")
     const icons = doc.getAttribute("icons")
@@ -30,9 +28,7 @@ export function getAttributes(asciidocText: string, pathCompleter: (path: string
         icons: icons ? icons : "font",
         'source-highlighter': sourceHighlighter ? sourceHighlighter : 'highlightjs',
         imagesdir: imagesDir ? imagesDir : resourceBasePath,
-        highlightjsdir: highlightjsDir ? highlightjsDir : pathCompleter(`${REVEALJS_PATH_OF_ASCIIDOCTOR}/plugin/highlight`),
-        'highlightjs-theme': givenHighlightJsThemePath ? givenHighlightJsThemePath : pathCompleter(`${REVEALJS_PATH_OF_ASCIIDOCTOR}/lib/css/zenburn.css`),
-        revealjsdir: revealjsdir ? revealjsdir : pathCompleter(REVEALJS_PATH_OF_ASCIIDOCTOR)
+        revealjsdir: revealjsdir ? revealjsdir : pathCompleter(REVEALJS_PATH)
     }
 }
 
@@ -45,7 +41,6 @@ export function createRevealJsHtml (asciidocText: string, pathCompleter: (path: 
         attributes
     }
     const completeRevealJsHtml =  asciidoctor.convert(asciidocText, opts) as string
-    
     if(preview) {
         const completeRevealJsHtmlWithResourceBase = injectIntoHtml(completeRevealJsHtml, "head", createLocalResourceBaseHtmlTag(resourceBasePath))
         return injectIntoHtml(completeRevealJsHtmlWithResourceBase, 'body', SCROLL_TO_SLIDE_LISTENER_SCRIPT)
