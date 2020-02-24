@@ -17,13 +17,13 @@
     asciidoctor-opal-runtime "0.3.0"
     unxhr "1.0.1"
 
-"@asciidoctor/reveal.js@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@asciidoctor/reveal.js/-/reveal.js-3.1.0.tgz#681eea3d3a6aa6684c9a86eea02dc15b3ef49a64"
-  integrity sha512-3xuEftygmc3sX4lzmYOVJL1uXGxlAjZM4/o3CphsEjUuGVT2aWEBXOA9Kod25YP98Nazf4jAf0aWubtM7ykasw==
+"@asciidoctor/reveal.js@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@asciidoctor/reveal.js/-/reveal.js-4.0.1.tgz#1c538839186647f9c00def3e1c8bbfc5cbbbeb14"
+  integrity sha512-LEVNtVDdgVbCqkq0+pmvyaF9ROuvPUVFS84V+UM1SbDnTdqCTio/Oj/k2C7alTANDedIMklxuZGKk38bhJGwoA==
   dependencies:
     "@asciidoctor/cli" "^3.1.0"
-    reveal.js "3.7.0"
+    reveal.js "3.9.2"
 
 "@babel/code-frame@^7.0.0":
   version "7.8.3"
@@ -1718,12 +1718,7 @@ restore-cursor@^3.1.0:
     onetime "^5.1.0"
     signal-exit "^3.0.2"
 
-reveal.js@3.7.0:
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/reveal.js/-/reveal.js-3.7.0.tgz#7afaf72fd963000381289d58f3aa54c0c46b150c"
-  integrity sha512-HTOTNhF5mQAw6fcsptk4oql/DEEUwTG0YHk/LzTNNx0/3IgvOQZqKzvlK/zNpqqKMLlhn1gH9Nvp+FFoc/e5/w==
-
-reveal.js@^3.9.2:
+reveal.js@3.9.2, reveal.js@^3.9.2:
   version "3.9.2"
   resolved "https://registry.yarnpkg.com/reveal.js/-/reveal.js-3.9.2.tgz#7f63d3dfec338b6c313dcabdf006e8cf80e0b358"
   integrity sha512-Dvv2oA9FrtOHE2DWj5js8pMRfwq++Wmvsn1EyAdYLC80lBjTphns+tPsB652Bnvep9AVviuVS/b4XoVY9rXHLA==
