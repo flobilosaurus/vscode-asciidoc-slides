@@ -44,6 +44,40 @@ image::media/suprise.gif[background, size=cover]
 [background-video="https://video.de/my.mp4",options="loop,muted"]
 --
 
+
+[.columns]
+== Column layout
+
+[.column]
+--
+* **Edgar Allen Poe**
+* Sheri S. Tepper
+* Bill Bryson
+--
+
+[.column]
+--
+Edgar Allan Poe (/poʊ/; born Edgar Poe; January 19, 1809 – October 7, 1849) was an American writer, editor, and literary critic.
+--
+
+
+[.columns]
+=== Columns with size
+
+[.column.is-one-third]
+--
+* **Kotlin**
+* Java
+* Scala
+--
+
+[.column]
+--
+Programming language for Android, mobile cross-platform
+and web development, server-side, native,
+and data science. Open source forever Github.
+--
+
 == Lists
 
 [source, asciidoc]
