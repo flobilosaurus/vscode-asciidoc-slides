@@ -6,24 +6,26 @@ import {Asciidoctor} from 'asciidoctor/types/index'
 /**
  * Check if Opal has been loaded already, if not, require through asciidoctor.js
  * workaround to dont bridge opal runtime again because it will throw.
- * This can happen if other extensions like joaompinto.asciidoctor-vscode 
- * have already required('opal-runtime') or required('asciidoctor.js') or similar 
+ * This can happen if other extensions like joaompinto.asciidoctor-vscode
+ * have already required('opal-runtime') or required('asciidoctor.js') or similar
  * and thereby already bridged opal.
  *  */
 const asciidoctor = ((<any>global).Opal && (<any>global).Opal.Asciidoctor) || require('@asciidoctor/core')()
 const asciidoctorRevealjs = require('@asciidoctor/reveal.js')
+const kroki = require("asciidoctor-kroki")
 asciidoctorRevealjs.register()
+kroki.register(asciidoctor.Extensions)
 
 export const REVEALJS_PATH = 'node_modules/reveal.js'
 
 export function getAttributes(asciidocText: string, pathCompleter: (path: string) => string, resourceBasePath: string) {
     const doc = asciidoctor.load(asciidocText) as Asciidoctor.Document
-    
+
     const imagesDir = doc.getAttribute("imagesdir")
     const revealjsdir = doc.getAttribute("revealjsdir")
     const sourceHighlighter = doc.getAttribute("source-highlighter")
     const icons = doc.getAttribute("icons")
-    
+
     return {
         icons: icons ? icons : "font",
         'source-highlighter': sourceHighlighter ? sourceHighlighter : 'highlightjs',
@@ -33,11 +35,11 @@ export function getAttributes(asciidocText: string, pathCompleter: (path: string
 }
 
 export function createRevealJsHtml (asciidocText: string, pathCompleter: (path: string) => string, resourceBasePath: string, preview: boolean) {
-    
+
     const attributes = getAttributes(asciidocText, pathCompleter, resourceBasePath)
-    const opts = { 
+    const opts = {
         backend: 'revealjs',
-        header_footer: true, 
+        header_footer: true,
         attributes
     }
     const completeRevealJsHtml =  asciidoctor.convert(asciidocText, opts) as string
