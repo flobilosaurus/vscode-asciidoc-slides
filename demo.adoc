@@ -46,13 +46,13 @@ image::media/suprise.gif[background, size=cover]
 
 == PlantUml
 [source, asciidoc]
-----
+--
 [graphviz]
 [plantuml,alice-bob]
 ....
 alice -> bob
 ....
-----
+--
 
 results in:
 
@@ -64,7 +64,7 @@ alice -> bob
 === Graphviz
 
 [source, asciidoc]
-----
+--
 [graphviz]
 ....
 digraph foo {
@@ -76,7 +76,7 @@ digraph foo {
   node1 -> node2 -> node3
 }
 ....
-----
+--
 
 results in:
 
@@ -104,13 +104,12 @@ digraph foo {
 
 [.column]
 --
-Edgar Allan Poe (/poʊ/; born Edgar Poe; January 19, 1809 – October 7, 1849) was an American writer, editor, and literary critic.
+Edgar Allan Poe (/poʊ/; born Edgar Poe; Ja
+nuary 19, 1809 – October 7, 1849) was an American writer, editor, and literary critic.
 --
-
 
 [.columns]
 === Columns with size
-
 [.column.is-one-third]
 --
 * **Kotlin**
@@ -187,8 +186,7 @@ second term:: definition of second term
 ----
 --
 
-results in
-
+results in:
 
 [source, clojure]
 ----
