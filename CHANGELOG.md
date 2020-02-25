@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.4.0]
+
+- add kroki integration, which converts textual description of diagrams to images (see https://github.com/Mogztter/asciidoctor-kroki)
+
 ## [0.3.0]
 
 - update @asciidoctor/reveal.js from 3.1 to 4.0

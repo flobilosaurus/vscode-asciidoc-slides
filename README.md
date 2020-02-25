@@ -18,3 +18,21 @@ Visual Studio Code extension to create [reveal.js](https://github.com/hakimel/re
 ### Export to reveal.js html file
 
 ![Alt Text](https://media.giphy.com/media/efOYmfvdiZNm6LFGzI/giphy.gif)
+
+### [Kroki](https://github.com/Mogztter/asciidoctor-kroki) integration
+
+Draws images out of textual description of diagrams.
+Example:
+```asciidoc
+[graphviz]
+....
+digraph foo {
+  node [style=rounded]
+  node1 [shape=box]
+  node2 [fillcolor=yellow, style="rounded,filled", shape=diamond]
+  node3 [shape=record, label="{ a | b | c }"]
+
+  node1 -> node2 -> node3
+}
+....
+```

@@ -44,6 +44,53 @@ image::media/suprise.gif[background, size=cover]
 [background-video="https://video.de/my.mp4",options="loop,muted"]
 --
 
+== PlantUml
+[source, asciidoc]
+----
+[graphviz]
+[plantuml,alice-bob]
+....
+alice -> bob
+....
+----
+
+results in:
+
+[plantuml,alice-bob,svg,role=sequence]
+....
+alice -> bob
+....
+
+=== Graphviz
+
+[source, asciidoc]
+----
+[graphviz]
+....
+digraph foo {
+  node [style=rounded]
+  node1 [shape=box]
+  node2 [fillcolor=yellow, style="rounded,filled", shape=diamond]
+  node3 [shape=record, label="{ a | b | c }"]
+
+  node1 -> node2 -> node3
+}
+....
+----
+
+results in:
+
+[graphviz]
+....
+digraph foo {
+  node [style=rounded]
+  node1 [shape=box]
+  node2 [fillcolor=yellow, style="rounded,filled", shape=diamond]
+  node3 [shape=record, label="{ a | b | c }"]
+
+  node1 -> node2 -> node3
+}
+....
 
 [.columns]
 == Column layout

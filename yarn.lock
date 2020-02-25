@@ -233,6 +233,14 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
+asciidoctor-kroki@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/asciidoctor-kroki/-/asciidoctor-kroki-0.6.0.tgz#4e26d21e659853653d9b154563b06b77de741e19"
+  integrity sha512-82wSXlNeCpfta3VE2aMS1DCMab5zi/iFTnH/J4w5geu1Ev8ZCjQJopJ5Gq+FImENpT5oSeQ5ftC9x7sE0iMEdQ==
+  dependencies:
+    pako "^1.0.10"
+    rusha "^0.8.13"
+
 asciidoctor-opal-runtime@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/asciidoctor-opal-runtime/-/asciidoctor-opal-runtime-0.3.0.tgz#df327a870ddd3cd5eb0e162d64ed4dcdd3fe3fee"
@@ -1561,6 +1569,11 @@ p-try@^2.0.0:
   resolved "https://registry.yarnpkg.com/p-try/-/p-try-2.2.0.tgz#cb2868540e313d61de58fafbe35ce9004d5540e6"
   integrity sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==
 
+pako@^1.0.10:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.11.tgz#6c9599d340d54dfd3946380252a35705a6b992bf"
+  integrity sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==
+
 parent-module@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/parent-module/-/parent-module-1.0.1.tgz#691d2709e78c79fae3a156622452d00762caaaa2"
@@ -1743,6 +1756,11 @@ run-async@^2.2.0:
   integrity sha1-A3GrSuC91yDUFm19/aZP96RFpsA=
   dependencies:
     is-promise "^2.1.0"
+
+rusha@^0.8.13:
+  version "0.8.13"
+  resolved "https://registry.yarnpkg.com/rusha/-/rusha-0.8.13.tgz#9a084e7b860b17bff3015b92c67a6a336191513a"
+  integrity sha1-mghOe4YLF7/zAVuSxnpqM2GRUTo=
 
 rxjs@^6.5.3:
   version "6.5.4"
