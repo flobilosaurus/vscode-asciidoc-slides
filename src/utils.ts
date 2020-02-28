@@ -58,23 +58,41 @@ export function injectIntoHtml(html: string, parentNodeSelector: string, toInjec
 }
 
 export function getCurrentSlideNumbers (content: string, line : number) : {hSlideNumber: number, vSlideNumber: number} | null {
-    const lines = content.split('\n')
-    if (lines && lines.length > 1) {
-        const linesInRange = lines.slice(0, line + 1)
-        let hSlideNumber = -1
-        let vSlideNumber = 0
-        linesInRange.forEach(l => {
-            if(l.startsWith('== ') || l.startsWith('= ')) {
-                hSlideNumber++
-                vSlideNumber = 0
-            }
-            if(l.startsWith('=== ')) {
-                vSlideNumber++
-            }
-        })
-        return {hSlideNumber, vSlideNumber}
+    if(!content) {
+        return null
     }
-    return null
+
+    const doc = asciidoctor.load(content, {header_footer: true, sourcemap: true}) as Asciidoctor.Document
+    const sections = doc.getSections()
+    if(!sections) {
+        return null
+    }
+
+    let sectionNumber = 0
+    let subSectionNumber = 0
+    const lineInAsciidoc = line + 1
+
+    const indexOfSectionAfterCursor = sections.findIndex(s => s.getLineNumber() > lineInAsciidoc)
+    if(indexOfSectionAfterCursor === 0) {
+        return {hSlideNumber: 0, vSlideNumber: 0}
+    }
+
+    if(indexOfSectionAfterCursor === -1) {
+        sectionNumber = sections.length - 1 
+    } else {
+        sectionNumber = indexOfSectionAfterCursor - 1
+    }
+
+    const subSections = sections[sectionNumber].getSections()
+    const indexOfSubSectionAfterCursor = subSections.findIndex(ss => ss.getLineNumber() > lineInAsciidoc)
+    if(indexOfSubSectionAfterCursor === -1) {
+        subSectionNumber = subSections.length 
+    } else {
+        subSectionNumber = indexOfSubSectionAfterCursor
+    }
+
+    // add one to hSlideNumber for title slide
+    return {hSlideNumber: sectionNumber + 1, vSlideNumber: subSectionNumber}
 }
 
 export function showErrorMessage(message: string) {
