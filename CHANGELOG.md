@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.4.1]
+
+- fixed: [bug in calculation of slide under cursor ](https://github.com/flobilosaurus/vscode-asciidoc-slides/issues/7)
+
 ## [0.4.0]
 
 - add kroki integration, which converts textual description of diagrams to images (see https://github.com/Mogztter/asciidoctor-kroki)
