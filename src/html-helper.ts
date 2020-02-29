@@ -7,7 +7,6 @@ export const SCROLL_TO_SLIDE_LISTENER_SCRIPT = `
                 })
 				addEventListener('message', event => {
                     const message = event.data;
-                    console.log("message", message)
 					switch (message.command) {
 						case 'gotoSlide':
 							Reveal.slide( message.hSlideNumber, message.vSlideNumber );

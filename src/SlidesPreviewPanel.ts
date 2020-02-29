@@ -31,7 +31,6 @@ export class SlidesPreviewPanel {
 		}
 
 		const revealJsPath = vscode.Uri.file(path.join(extensionPath, REVEALJS_PATH))
-		console.log("revealJsPath", revealJsPath)
 		const localResourceBasePath = vscode.Uri.file(path.dirname(baseEditor.document.fileName))
 		const panel = vscode.window.createWebviewPanel(
 			SlidesPreviewPanel.viewType,
