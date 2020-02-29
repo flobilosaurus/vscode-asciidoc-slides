@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path'
-
+const slash = require('slash')
 import { getCurrentSlideNumbers, createRevealJsHtml, showErrorMessage, REVEALJS_PATH} from './utils'
 
 export class SlidesPreviewPanel {
@@ -104,7 +104,7 @@ export class SlidesPreviewPanel {
 	private async _getHtmlForWebview() {
 		let asciidocText = this._baseEditor.document.getText()
 
-		const pathCompleter = (inputPath: string) => this._panel.webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionPath, inputPath))).toString()
+		const pathCompleter = (inputPath: string) => this._panel.webview.asWebviewUri(vscode.Uri.file(slash(path.join(this._extensionPath, inputPath)))).toString()
 		const resourceBasePath = this._panel.webview.asWebviewUri(vscode.Uri.file(path.dirname(this._baseEditor.document.fileName))) + "/"
 		return await createRevealJsHtml(asciidocText, pathCompleter, resourceBasePath, true)
 	}

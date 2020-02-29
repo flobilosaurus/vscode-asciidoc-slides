@@ -1,8 +1,12 @@
 # Change Log
 
+## [0.4.2]
+
+- fixed: [bug in some path in exported slides html, on windows](https://github.com/flobilosaurus/vscode-asciidoc-slides/issues/8)
+
 ## [0.4.1]
 
-- fixed: [bug in calculation of slide under cursor ](https://github.com/flobilosaurus/vscode-asciidoc-slides/issues/7)
+- fixed: [bug in calculation of slide under cursor](https://github.com/flobilosaurus/vscode-asciidoc-slides/issues/7)
 
 ## [0.4.0]
 
