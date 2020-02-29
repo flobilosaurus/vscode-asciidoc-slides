@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.5.0]
+
+- reduce size of extension (use webpack)
+
 ## [0.4.2]
 
 - fixed: [bug in some path in exported slides html, on windows](https://github.com/flobilosaurus/vscode-asciidoc-slides/issues/8)
