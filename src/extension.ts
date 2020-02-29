@@ -3,6 +3,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import { SlidesPreviewPanel } from './SlidesPreviewPanel';
 import { createRevealJsHtml, showErrorMessage } from './utils';
+const slash = require("slash")
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -16,10 +17,9 @@ export function activate(context: vscode.ExtensionContext) {
 			const proposedFilename = path.join(path.dirname(document.fileName), "slides.html")
 			const exportFileLocation = await vscode.window.showSaveDialog({defaultUri: vscode.Uri.file(proposedFilename), filters: {'HTML': ['html']}})
 			if(exportFileLocation) {
-				
-				const pathCompleter = (inputPath: string) => path.join(context.extensionPath, inputPath)
-				console.log("resource base path: ", path.dirname(document.fileName))
-				const slidesHtml = createRevealJsHtml(document.getText(), pathCompleter, path.dirname(document.fileName), false);
+				const pathCompleter = (inputPath: string) => slash(path.join(context.extensionPath, inputPath))
+				const resourceBasePath = slash(path.dirname(document.fileName))
+				const slidesHtml = createRevealJsHtml(document.getText(), pathCompleter, resourceBasePath, false);
 				fs.writeFile(exportFileLocation.fsPath, slidesHtml, (err) => {
 					if(err) {
 						showErrorMessage(`Error while exporting: ${err?.message}`)
