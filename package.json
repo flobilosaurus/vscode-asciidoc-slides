@@ -2,7 +2,7 @@
 	"name": "vscode-asciidoc-slides",
 	"displayName": "AsciiDoc Slides",
 	"description": "Create a presentation via AsciiDoc",
-	"version": "0.4.2",
+	"version": "0.5.0",
 	"publisher": "flobilosaurus",
 	"repository": {
 		"type": "git",
@@ -26,7 +26,7 @@
 		"onCommand:asciidocSlides.preview",
 		"onCommand:asciidocSlides.export"
 	],
-	"main": "./out/extension.js",
+	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -42,11 +42,10 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "yarn compile",
-		"compile": "tsc -p ./",
-		"lint": "eslint src --ext ts",
-		"watch": "tsc -watch -p ./",
-		"pretest": "yarn compile && yarn lint",
+		"vscode:prepublish": "webpack --mode production",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
+		"pretest": "tsc -p ./",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
@@ -61,8 +60,11 @@
 		"glob": "^7.1.6",
 		"html-validator": "^5.0.0",
 		"mocha": "^7.0.1",
+		"ts-loader": "^6.2.1",
 		"typescript": "^3.7.5",
-		"vscode-test": "^1.3.0"
+		"vscode-test": "^1.3.0",
+		"webpack": "^4.41.6",
+		"webpack-cli": "^3.3.11"
 	},
 	"dependencies": {
 		"@asciidoctor/reveal.js": "^4.0.1",
