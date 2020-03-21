@@ -99,10 +99,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.7.0.tgz#b417deda18cf8400f278733499ad5547ed1abec4"
   integrity sha512-GnZbirvmqZUzMgkFn70c74OQpTTUcCzlhQliTzYjQMqg+hVKcDnxdL19Ne3UdYzdMA/+W3eb646FWn/ZaT1NfQ==
 
-"@types/node@^12.11.7":
-  version "12.12.26"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.26.tgz#213e153babac0ed169d44a6d919501e68f59dea9"
-  integrity sha512-UmUm94/QZvU5xLcUlNR8hA7Ac+fGpO1EG/a8bcWVz0P0LqtxFmun9Y2bbtuckwGboWJIT70DoWq1r3hb56n3DA==
+"@types/node@^13.9.2":
+  version "13.9.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.9.2.tgz#ace1880c03594cc3e80206d96847157d8e7fa349"
+  integrity sha512-bnoqK579sAYrQbp73wwglccjJ4sfRdKU7WNEZ5FW4K2U6Kc0/eZ5kvXG0JKsEKFB50zrFmfFt52/cvBbZa7eXg==
 
 "@types/vscode@^1.41.0":
   version "1.42.0"
@@ -447,10 +447,10 @@ array-unique@^0.3.2:
   resolved "https://registry.yarnpkg.com/array-unique/-/array-unique-0.3.2.tgz#a894b75d4bc4f6cd679ef3244a9fd8f46ae2d428"
   integrity sha1-qJS3XUvE9s1nnvMkSp/Y9Gri1Cg=
 
-asciidoctor-kroki@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/asciidoctor-kroki/-/asciidoctor-kroki-0.6.0.tgz#4e26d21e659853653d9b154563b06b77de741e19"
-  integrity sha512-82wSXlNeCpfta3VE2aMS1DCMab5zi/iFTnH/J4w5geu1Ev8ZCjQJopJ5Gq+FImENpT5oSeQ5ftC9x7sE0iMEdQ==
+asciidoctor-kroki@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/asciidoctor-kroki/-/asciidoctor-kroki-0.7.0.tgz#f0ffc94f742ba780cff1f411fc7d4b0c579e6991"
+  integrity sha512-v3bkAy+8RbJoQP6WWZmIRVcuGHTyXJhAMTH8aQCPhDJjez4myzq2BBdx/7fw7FNWmBs2j4a4McJx7mKXiqD/cA==
   dependencies:
     pako "^1.0.10"
     rusha "^0.8.13"
