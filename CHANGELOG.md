@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.5.1]
+
+- remove security issues by updating dependencies
+
 ## [0.5.0]
 
 - reduce size of extension (use webpack)
