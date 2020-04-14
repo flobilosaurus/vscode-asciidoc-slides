@@ -11,7 +11,7 @@ Visual Studio Code extension to create [reveal.js](https://github.com/hakimel/re
 
 ### Slide Preview Panel 
 
-![demo slide preview panel](https://github.com/flobilosaurus/vscode-asciidoc-slides/raw/master/media/ExportSlidesHtml.gif)
+![demo slide preview panel](https://github.com/flobilosaurus/vscode-asciidoc-slides/raw/master/media/PreviewPanel.gif)
 
 * Shows reveal.js slides of asciidoc document beside it.
 * Preview is updated on every save of base document.
@@ -19,7 +19,7 @@ Visual Studio Code extension to create [reveal.js](https://github.com/hakimel/re
 
 ### Open in Browser
 
-![demo open in browser](https://github.com/flobilosaurus/vscode-asciidoc-slides/raw/master/media/OpenInBrowser.gif)
+![demo open in browser](https://github.com/flobilosaurus/vscode-asciidoc-slides/raw/master/media/openInBrowser.gif)
 
 * Show reveal.js slides of asciidoc document in browser.
 * Website in browser is updated on every save of base document.
@@ -29,7 +29,7 @@ Visual Studio Code extension to create [reveal.js](https://github.com/hakimel/re
 
 Export your slides into a html file which will work locally on your computer (containing links to all required resources as scripts, styles and images).
 
-![demo export html](https://github.com/flobilosaurus/vscode-asciidoc-slides/raw/master/media/PreviewPanel.gif)
+![demo export html](https://github.com/flobilosaurus/vscode-asciidoc-slides/raw/master/media/ExportSlidesHtml.gif)
 
 ### Export to inlined (shareable) reveal.js html file
 
