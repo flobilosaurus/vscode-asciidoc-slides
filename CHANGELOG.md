@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.1.0]
+
+- complete redevelopment of extension inspired by [vscode reveal][https://github.com/evilz/vscode-reveal]
+- add command 'show in browser'
+- add command 'export to inlined html'
+
 ## [0.5.1]
 
 - remove security issues by updating dependencies

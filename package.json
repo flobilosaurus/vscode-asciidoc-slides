@@ -2,7 +2,7 @@
 	"name": "vscode-asciidoc-slides",
 	"displayName": "AsciiDoc Slides",
 	"description": "Create a presentation via AsciiDoc",
-	"version": "0.5.1",
+	"version": "1.1.0",
 	"publisher": "flobilosaurus",
 	"repository": {
 		"type": "git",
@@ -24,7 +24,9 @@
 	],
 	"activationEvents": [
 		"onCommand:asciidocSlides.preview",
-		"onCommand:asciidocSlides.export"
+		"onCommand:asciidocSlides.exportHtml",
+		"onCommand:asciidocSlides.exportInlinedHtml",
+		"onCommand:asciidocSlides.openInBrowser"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
@@ -35,8 +37,18 @@
 				"category": "Asciidoc Slides"
 			},
 			{
-				"command": "asciidocSlides.export",
-				"title": "Asciidoc Slides: Export slides as Html file",
+				"command": "asciidocSlides.openInBrowser",
+				"title": "Asciidoc Slides: Open Slides in Browser",
+				"category": "Asciidoc Slides"
+			},
+			{
+				"command": "asciidocSlides.exportHtml",
+				"title": "Asciidoc Slides: Export slides to Html file",
+				"category": "Asciidoc Slides"
+			},
+			{
+				"command": "asciidocSlides.exportInlinedHtml",
+				"title": "Asciidoc Slides: Export slides to inlined Html file",
 				"category": "Asciidoc Slides"
 			}
 		]
@@ -50,7 +62,6 @@
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
-		"@types/html-validator": "^5.0.0",
 		"@types/mocha": "^7.0.1",
 		"@types/node": "^13.9.2",
 		"@types/vscode": "^1.41.0",
@@ -58,7 +69,6 @@
 		"@typescript-eslint/parser": "^2.19.0",
 		"eslint": "^6.8.0",
 		"glob": "^7.1.6",
-		"html-validator": "^5.1.5",
 		"mocha": "^7.1.1",
 		"ts-loader": "^6.2.1",
 		"typescript": "^3.8.3",
@@ -68,13 +78,31 @@
 	},
 	"dependencies": {
 		"@asciidoctor/reveal.js": "^4.0.1",
+		"@types/axios": "^0.14.0",
 		"@types/chai": "^4.2.8",
-		"@types/cheerio": "^0.22.16",
+		"@types/koa": "^2.11.3",
+		"@types/koa-ejs": "^4.2.2",
+		"@types/koa-favicon": "^2.0.19",
+		"@types/koa-logger": "^3.1.1",
+		"@types/koa-send": "^4.1.2",
+		"@types/slash": "^3.0.0",
+		"@types/web-resource-inliner": "^4.2.0",
+		"@types/ws": "^7.2.3",
 		"asciidoctor": "^2.1.1",
 		"asciidoctor-kroki": "^0.7.0",
+		"axios": "^0.19.2",
 		"chai": "^4.2.0",
-		"cheerio": "^1.0.0-rc.3",
+		"font-awesome": "^4.7.0",
+		"highlight.js": "^9.18.1",
+		"koa": "^2.11.0",
+		"koa-easy-ws": "^1.1.3",
+		"koa-ejs": "^4.3.0",
+		"koa-favicon": "^2.1.0",
+		"koa-logger": "^3.2.1",
+		"koa-send": "^5.0.0",
+		"open": "^7.0.3",
 		"reveal.js": "^3.9.2",
-		"slash": "^3.0.0"
+		"slash": "^3.0.0",
+		"web-resource-inliner": "^4.3.4"
 	}
 }

@@ -11,15 +11,42 @@ Visual Studio Code extension to create [reveal.js](https://github.com/hakimel/re
 
 ### Slide Preview Panel 
 
-![Alt Text](https://media.giphy.com/media/VGtyrjurkjpyyYwswG/giphy.gif)
+![demo slide preview panel](https://github.com/flobilosaurus/vscode-asciidoc-slides/raw/master/media/ExportSlidesHtml.gif)
 
 * Shows reveal.js slides of asciidoc document beside it.
 * Preview is updated on every save of base document.
 * Preview is scrolled to the slide of cursor on every save of base document.
 
+### Open in Browser
+
+![demo open in browser](https://github.com/flobilosaurus/vscode-asciidoc-slides/raw/master/media/OpenInBrowser.gif)
+
+* Show reveal.js slides of asciidoc document in browser.
+* Website in browser is updated on every save of base document.
+* Website in browser is scrolled to the slide of cursor on every save of base document.
+
 ### Export to reveal.js html file
 
-![Alt Text](https://media.giphy.com/media/efOYmfvdiZNm6LFGzI/giphy.gif)
+Export your slides into a html file which will work locally on your computer (containing links to all required resources as scripts, styles and images).
+
+![demo export html](https://github.com/flobilosaurus/vscode-asciidoc-slides/raw/master/media/PreviewPanel.gif)
+
+### Export to inlined (shareable) reveal.js html file
+
+Export your slides into an inlined html file which will work everywhere (containing all required scripts, styles and images).
+
+#### restraints
+
+Inlining currently breaks the following plugins:
+
+* notes plugin (reader view)
+
+Inlining currently does not work for:
+
+* Background Images
+* Background Videos
+* Background IFrames
+* Probably a lot more ...
 
 ### [Kroki](https://github.com/Mogztter/asciidoctor-kroki) integration
 

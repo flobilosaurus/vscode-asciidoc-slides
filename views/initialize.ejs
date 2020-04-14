@@ -1,0 +1,18 @@
+<script>
+    Reveal.initialize({
+        hash: true,
+        history: true,
+        dependencies: [
+            { src: '<%= absolutePath %>libs/reveal.js/plugin/notes/notes.js', async: true },
+<% if (!isInlined) { %>
+            { src: '<%= absolutePath %>libs/reveal.js/plugin/zoom-js/zoom.js', async: true },
+            { src: '<%= absolutePath %>libs/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); }},
+<% } %>
+        ]
+    })
+</script>
+
+<% if (isInlined) { %>
+<script type="text/javascript" src="<%= absolutePath %>libs/reveal.js/plugin/zoom-js/zoom.js"></script>
+<script type="text/javascript" src="<%= absolutePath %>libs/reveal.js/plugin/highlight/highlight.js"></script>
+<% } %>

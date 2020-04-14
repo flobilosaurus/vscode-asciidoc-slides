@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+
+<%- include('header'); -%>
+
+<body>
+
+  <div class="reveal">
+
+    <div class="slides">
+
+      <%- body %>
+
+    </div>
+
+  </div>
+  <script src="<%= absolutePath %>libs/highlight.js/lib/highlight.js"></script>
+  <script src="<%= absolutePath %>libs/reveal.js/js/reveal.js"></script>
+  
+  <%- include('initialize'); -%>
+
+  <%- include('browser-refresh-script'); -%>
+</body>
+
+</html>

@@ -1,0 +1,18 @@
+
+<% if (isPreview) { %>
+<script>
+    const runningInIFrame = window !== window.parent
+    // only create websocket connection in external browser,
+    // when webpage is not running in iframe
+    if(!runningInIFrame) {
+        let socket = new WebSocket("<%= websocketUrl %>");
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data)
+            if(data.cmd === 'goto') {
+                location.href = '/#/' + data.slide
+                location.reload()
+            }
+        }
+    }
+</script>
+<% } %>

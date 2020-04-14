@@ -1,6 +1,4 @@
-
 :revealjs_theme: moon
-:highlightjs-languages: asciidoc, clojure
 = asciidoc slides extension
 
 == Images
