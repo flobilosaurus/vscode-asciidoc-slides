@@ -2,7 +2,7 @@
 
 ## [1.1.0]
 
-- complete redevelopment of extension inspired by [vscode reveal][https://github.com/evilz/vscode-reveal]
+- complete redevelopment of extension inspired by [vscode reveal](https://github.com/evilz/vscode-reveal)
 - add command 'show in browser'
 - add command 'export to inlined html'
 
