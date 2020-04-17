@@ -33,7 +33,6 @@ export type RevealConfiguration = {
 function docAccessor(asciidocText: string) {
 
     const doc: Asciidoctor.Document = asciidoctor.load(asciidocText, {header_footer: true})
-    console.log(`attributes ${JSON.stringify(doc.getAttributes())}`)
     return {
         getAttributeOrDefault: (key: string, defaultValue?: string) => {
             return doc.hasAttribute(key) ? doc.getAttribute(key) : defaultValue
@@ -125,15 +124,19 @@ export class RevealSlides {
 
     public getSlidesHtmlForExport() {
         
-        return asciidoctor.convert(this.editor.document.getText(), { backend: 'revealjs', attributes: {'imagesdir': this.imageDirectory} }) as string
+        return asciidoctor.convert(this.editor.document.getText(), { backend: 'revealjs', attributes: {'imagesdir': this.absoluteImagesDir} }) as string
     }
 
     public get configuration() {
         return this.revealConfiguration
     }
 
-    public get imageDirectory() {
-        return path.join(path.dirname(this.baseEditor.document.fileName), this.asciidocAttributes.imageDir)
+    public get absoluteDocumentDirectory() {
+        return path.dirname(this.baseEditor.document.fileName)
+    }
+
+    public get absoluteImagesDir() {
+        return path.join(this.absoluteDocumentDirectory, this.asciidocAttributes.imageDir)
     }
 
     public get currentSlideId() {

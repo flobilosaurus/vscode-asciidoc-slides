@@ -68,7 +68,7 @@ export class RevealServer {
             ctx.state = this.getRenderConfig()
             await ctx.render('reveal');
         } else {
-            await send(ctx, ctx.path, { root: this.revealSlides.imageDirectory });
+            await send(ctx, ctx.path, { root: this.revealSlides.absoluteDocumentDirectory });
         }
     }
 

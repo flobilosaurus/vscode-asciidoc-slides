@@ -2,7 +2,7 @@
 	"name": "vscode-asciidoc-slides",
 	"displayName": "AsciiDoc Slides",
 	"description": "Create a presentation via AsciiDoc",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"publisher": "flobilosaurus",
 	"repository": {
 		"type": "git",

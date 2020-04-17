@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.1.1]
+
+- bugfix: path of attribute __imagesdir__ was not handled correctly in preview
+
 ## [1.1.0]
 
 - complete redevelopment of extension inspired by [vscode reveal](https://github.com/evilz/vscode-reveal)
