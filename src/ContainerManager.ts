@@ -2,7 +2,7 @@ import * as vscode from 'vscode'
 import { Container } from './Container'
 export class ContainerManager {
 
-    private editorContainerMap: Map<vscode.TextEditor, Container>
+    private editorContainerMap: Map<vscode.Uri, Container>
     private context: vscode.ExtensionContext
     private logger: (line:string) => void
 
@@ -27,10 +27,10 @@ export class ContainerManager {
     }
 
     private getOrCreateContainer(editor: vscode.TextEditor) {
-        if(!this.editorContainerMap.has(editor)) {
-            this.editorContainerMap.set(editor, new Container(this.context, editor, this.logger))
+        if(!this.editorContainerMap.has(editor.document.uri)) {
+            this.editorContainerMap.set(editor.document.uri, new Container(this.context, editor, this.logger))
         }
-        const container = this.editorContainerMap.get(editor)
+        const container = this.editorContainerMap.get(editor.document.uri)
         if(!container) {
             throw Error('could not create container')
         }

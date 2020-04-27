@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.2.0]
+
+- feature: enable possibility to include other asciidoc content (eg. `include::another.adoc[]`)
+- bugfix: scroll to slide under cursor was broken after another document was saved
+- bugfix: each 'open slides in browser' command started a new server instance, even if called on the same document
+
 ## [1.1.1]
 
 - bugfix: path of attribute __imagesdir__ was not handled correctly in preview

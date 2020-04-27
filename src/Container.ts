@@ -20,7 +20,7 @@ export class Container {
     }
 
     public onDidSaveTextDocument(e: vscode.TextDocument) {
-        if(e !== this.revealSlides.editor.document) {
+        if(e.languageId !== 'asciidoc') {
             return
         }
         this.revealSlides.update()
@@ -30,7 +30,6 @@ export class Container {
     }
 
     public onDidCloseTextDocument(e: vscode.TextDocument) {
-        this.logger(`text document closed ${e.languageId}`)
         if(e !== this.revealSlides.editor.document) {
             return
         }
@@ -54,7 +53,7 @@ export class Container {
     public async exportAsInlinedHtml(targetFile: string) {
         if(this.server.exportUrl) {
             try{
-                const resp = await Axios.get(this.server.exportUrl)
+                const resp = await Axios.get(this.server.exportInlinedUrl)
                 const inlinedHtml = await this.inline(resp.data)
                 fs.writeFileSync(targetFile, inlinedHtml)
                 vscode.window.showInformationMessage(`Exported slides as inlined html to file: ${targetFile}`)
@@ -66,7 +65,7 @@ export class Container {
 
     private inline (html: string) {
         return new Promise<string>((resolve,reject) => {
-            inlineHtml({fileContent: html, images: true, svgs: true, scripts: true}, (error, result) => {
+            inlineHtml({fileContent: html, images: true, svgs: true, scripts: true, relativeTo: this.revealSlides.absoluteImagesDir}, (error, result) => {
                 if(error) {
                     reject(error)
                 }

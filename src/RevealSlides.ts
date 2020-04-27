@@ -1,6 +1,6 @@
 import { Asciidoctor } from 'asciidoctor/types/index'
-import * as vscode from 'vscode'
 import * as path from 'path'
+import * as vscode from 'vscode'
 /**
  * Check if Opal has been loaded already, if not, require through asciidoctor.js
  * workaround to dont bridge opal runtime again because it will throw.
@@ -30,15 +30,18 @@ export type RevealConfiguration = {
     isInlined: boolean
 }
 
-function docAccessor(asciidocText: string) {
+function docAccessor(asciidocText: string, docDir: string) {
 
-    const doc: Asciidoctor.Document = asciidoctor.load(asciidocText, {header_footer: true})
+    const doc: Asciidoctor.Document = asciidoctor.load(asciidocText, {safe: 'safe', header_footer: true, attributes: {docDir}})
     return {
         getAttributeOrDefault: (key: string, defaultValue?: string) => {
             return doc.hasAttribute(key) ? doc.getAttribute(key) : defaultValue
         },
         getTitle: () => {
             return doc.getTitle()
+        },
+        getFullAttributes() {
+            return doc.getAttributes()
         }
     } 
 }
@@ -60,19 +63,22 @@ export class RevealSlides {
     }
 
     private convertToRevealJsSlides(asciidocText: string) {
-        return asciidoctor.convert(asciidocText, { backend: 'revealjs' }) as string
+        return asciidoctor.convert(asciidocText, { safe: 'safe', backend: 'revealjs', attributes: {docDir: this.absoluteDocumentDirectory}}) as string
     }
 
     private extractAsciidocAttributes(asciidocText: string) {
-        const accessor = docAccessor(asciidocText)
+        const accessor = docAccessor(asciidocText, this.absoluteDocumentDirectory)
         
-        return {
+        const attributes = {
+            ...accessor.getFullAttributes(),
             title: accessor.getTitle(),
             imageDir: accessor.getAttributeOrDefault('imagesdir', ''),
             revealJsTheme: accessor.getAttributeOrDefault('revealjs_theme', 'night'),
             revealJsCustomTheme: accessor.getAttributeOrDefault('revealjs_customtheme', undefined),
             hightlightJsTheme: accessor.getAttributeOrDefault('hightlightjs-theme', 'monokai')
         }
+
+        return attributes
     }
 
     private extractRevealConfiguration(asciidocAttributes: AsciidocAttributes) {
@@ -86,31 +92,43 @@ export class RevealSlides {
     }
 
     private getSlideIdUnderCursor (asciidocText: string, lineNumber: number) {    
-        const doc = asciidoctor.load(asciidocText, {header_footer: true, sourcemap: true}) as Asciidoctor.Document
+        const doc = asciidoctor.load(asciidocText, {safe: 'safe', header_footer: true, sourcemap: true}) as Asciidoctor.Document
 
-        const sections = doc.getSections()
-        if(!sections) {
-            return '' // title slide
-        }
-    
-        const lineInAsciidoc = lineNumber + 1
-    
-        const indexOfSectionAfterCursor = sections.findIndex(s => s.getLineNumber() > lineInAsciidoc)
-    
-        if(indexOfSectionAfterCursor === 0) {
-            return '' // title slide
-        } else if (indexOfSectionAfterCursor === -1) {
-            const lastSection = sections ? sections[sections.length-1] : undefined
-            return lastSection ? lastSection.getId() : ''
-        }
-    
-        const currentSection = sections[indexOfSectionAfterCursor - 1]
-        const subSections = currentSection.getSections()
-        const indexOfSubSectionAfterCursor = subSections.findIndex(ss => ss.getLineNumber() > lineInAsciidoc)
-        if(indexOfSubSectionAfterCursor <= 0) {
-            return currentSection.getId()
-        } else {
-            return subSections[indexOfSubSectionAfterCursor - 1].getId()
+        try{
+            const sections = doc.getSections()
+            if(!sections) {
+                return '' // title slide
+            }
+        
+            const lineInAsciidoc = lineNumber + 1
+            const indexOfSectionAfterCursor = sections.findIndex(s => s.getLineNumber() > lineInAsciidoc)
+
+            if(indexOfSectionAfterCursor === 0) {
+                return '' // title slide
+            } else if (indexOfSectionAfterCursor === -1) {
+                const lastSection = sections ? sections[sections.length-1] : undefined
+                return lastSection ? lastSection.getId() : ''
+            }
+        
+            const currentSection = sections[indexOfSectionAfterCursor - 1]
+            const subSections = currentSection.getSections()
+
+            if(!subSections || subSections.length <= 0) {
+                return sections[indexOfSectionAfterCursor - 1].getId()
+            }
+
+            const indexOfSubSectionAfterCursor = subSections.findIndex(ss => ss.getLineNumber() > lineInAsciidoc)
+            
+            if(indexOfSubSectionAfterCursor === 0) {
+                return currentSection.getId()
+            } else if(indexOfSubSectionAfterCursor === -1) {
+                return subSections[subSections.length - 1].getId()
+            } else {
+                return subSections[indexOfSubSectionAfterCursor - 1].getId()
+            }
+        } catch (e) {
+            console.error(e)
+            return ''
         }
     }
 
@@ -122,9 +140,18 @@ export class RevealSlides {
         return this.slidesHtml
     }
 
-    public getSlidesHtmlForExport() {
-        
-        return asciidoctor.convert(this.editor.document.getText(), { backend: 'revealjs', attributes: {'imagesdir': this.absoluteImagesDir} }) as string
+    public getSlidesHtmlForExport(forInlined: boolean) {
+        const attributes: any = {
+            docDir: this.absoluteDocumentDirectory
+        }
+        if(!forInlined) {
+            attributes['imagesdir'] = this.absoluteImagesDir
+        }
+        return asciidoctor.convert(this.editor.document.getText(), {
+            safe: 'safe',
+            backend: 'revealjs',
+            attributes
+        }) as string
     }
 
     public get configuration() {
@@ -144,12 +171,21 @@ export class RevealSlides {
     }
 
     public update() {
-        const asciidocText = this.editor.document.getText()
+        
+        this.refreshReferenceToMyEditor()
 
+        const asciidocText = this.editor.document.getText()
         this.asciidocAttributes = this.extractAsciidocAttributes(asciidocText)
         this.revealConfiguration = this.extractRevealConfiguration(this.asciidocAttributes)
         this.slidesHtml = this.convertToRevealJsSlides(asciidocText)
-        this.slideIdUnderCursor = this.getSlideIdUnderCursor(asciidocText, this.editor.selection.active.line)
+        this.slideIdUnderCursor = this.getSlideIdUnderCursor(asciidocText, this.baseEditor.selection.start.line)
     }
 
+    // workaround for bug: selection of this.baseEditor stays the same as soon as we save another document ...
+    private refreshReferenceToMyEditor() {
+        const freshReferenceToBaseEditor = vscode.window.visibleTextEditors.find(e => e.document.uri === this.baseEditor.document.uri)
+        if(freshReferenceToBaseEditor) {
+            this.baseEditor = freshReferenceToBaseEditor
+        }
+    }
 }

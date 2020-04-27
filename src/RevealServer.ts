@@ -36,8 +36,7 @@ export class RevealServer {
             root: path.resolve(this.extensionPath, 'views'),
             layout: 'template',
             viewExt: 'ejs',
-            cache: false,
-            debug: true
+            cache: false
         })
 
         this.app.on('error', err => console.error(err))
@@ -74,7 +73,7 @@ export class RevealServer {
 
     public getExportRenderConfig (isInlined: boolean) {
         return {
-            slides: this.revealSlides.getSlidesHtmlForExport(), 
+            slides: this.revealSlides.getSlidesHtmlForExport(isInlined), 
             ...this.revealSlides.configuration,
             absolutePath: slash(this.extensionPath) + '/',
             isInlined,
