@@ -142,10 +142,8 @@ export class RevealSlides {
 
     public getSlidesHtmlForExport(forInlined: boolean) {
         const attributes: any = {
-            docDir: this.absoluteDocumentDirectory
-        }
-        if(!forInlined) {
-            attributes['imagesdir'] = this.absoluteImagesDir
+            docDir: this.absoluteDocumentDirectory,
+            imagesdir: this.absoluteImagesDir
         }
         return asciidoctor.convert(this.editor.document.getText(), {
             safe: 'safe',

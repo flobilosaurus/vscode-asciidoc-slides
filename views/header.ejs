@@ -8,6 +8,14 @@
     <link rel="stylesheet" href="<%= absolutePath %><%= themeCss %>">
     <link rel="stylesheet" href="<%= absolutePath %>libs/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="<%= absolutePath %><%= hightlightJsThemeCss %>">
-  
+
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? '<%= absolutePath %>libs/reveal.js/css/print/pdf.css' : '<%= absolutePath %>libs/reveal.js/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
     <%- include('asciidoc-styles'); -%>
   </head>

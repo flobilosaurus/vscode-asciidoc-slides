@@ -65,3 +65,7 @@ digraph foo {
 }
 ....
 ```
+
+### Print Slides / Export as PDF
+
+While slides are __shown in browser__ or __exported as html/inlined html__ to same computer, they can transformed into a printable format via url parameter `?print-pdf`. The resulting website is printable (or exportable as pdf) via default print menu of chrome/chromium browser (`ctrl + p` or `cmd + p`). 

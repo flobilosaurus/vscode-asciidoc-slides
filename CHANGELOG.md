@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.3.0]
+
+- feature: printing or exporting as pdf via url parameter `?print-pdf` (see: [revealjs - pdf export](https://github.com/hakimel/reveal.js/#instructions-1))
+- bugfix for bug 'inlined html export did not inline some style and script resources'
+
 ## [1.2.0]
 
 - feature: enable possibility to include other asciidoc content (eg. `include::another.adoc[]`)

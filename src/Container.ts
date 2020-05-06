@@ -51,7 +51,7 @@ export class Container {
     }
 
     public async exportAsInlinedHtml(targetFile: string) {
-        if(this.server.exportUrl) {
+        if(this.server.exportInlinedUrl) {
             try{
                 const resp = await Axios.get(this.server.exportInlinedUrl)
                 const inlinedHtml = await this.inline(resp.data)
@@ -65,7 +65,7 @@ export class Container {
 
     private inline (html: string) {
         return new Promise<string>((resolve,reject) => {
-            inlineHtml({fileContent: html, images: true, svgs: true, scripts: true, relativeTo: this.revealSlides.absoluteImagesDir}, (error, result) => {
+            inlineHtml({fileContent: html, images: true, svgs: true, scripts: true}, (error, result) => {
                 if(error) {
                     reject(error)
                 }
