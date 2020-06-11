@@ -16,18 +16,20 @@ export class RevealServer {
     private readonly extensionPath: string
     private readonly server: http.Server
     private readonly websocketServer: WebSocket.Server
-    private logger: (line: string) => void
+    private logger?: (line: string) => void
     private revealSlides : RevealSlides
 
-    constructor(extensionPath: string, revealSlides: RevealSlides, logger: (line: string) => void) {
+    constructor(extensionPath: string, revealSlides: RevealSlides, logger?: (line: string) => void) {
         this.revealSlides = revealSlides
         this.extensionPath = extensionPath
         this.logger = logger
         this.app = new Koa();
         const websocketMiddleware = websocket()
         this.websocketServer = websocketMiddleware.server
+        if(logger) {
+            this.app.use(koalogger(logger))
+        }
         this.app
-            //.use(koalogger(logger))
             .use(websocketMiddleware)
             .use(favicon(path.join(this.extensionPath, 'media/favicon.ico')))
             .use((ctx, next) => this.handler(ctx, next))
@@ -42,7 +44,9 @@ export class RevealServer {
         this.app.on('error', err => console.error(err))
         this.server = this.app.listen()
 
-        logger(`asciidoc slides server started at ${this.serverUrl}`)
+        if(logger) {
+            logger(`asciidoc slides server started at ${this.serverUrl}`)
+        }
     }
 
     private async handler (ctx: Koa.Context, next: Koa.Next) {
@@ -131,7 +135,9 @@ export class RevealServer {
     }
 
     public shutdown() {
-        this.logger('asciidoc slides server shutdown')
+        if(this.logger) {
+            this.logger('asciidoc slides server shutdown')
+        }
         this.server.close()
     }
 }

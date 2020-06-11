@@ -9,12 +9,12 @@ export class Container {
     private revealSlides: RevealSlides
     private server: RevealServer;
     private webviewPanel?: vscode.WebviewPanel
-    private logger: (line: string) => void
+    private logger?: (line: string) => void
     private disposables: vscode.Disposable[] = []
-    constructor(context: vscode.ExtensionContext, editor: vscode.TextEditor, logger: (line: string) => void) {
+    constructor(extensionPath: string, editor: vscode.TextEditor, logger?: (line: string) => void) {
         this.logger = logger
         this.revealSlides = new RevealSlides(editor)
-        this.server = new RevealServer(context.extensionPath, this.revealSlides, logger)
+        this.server = new RevealServer(extensionPath, this.revealSlides, logger)
         this.disposables.push(vscode.workspace.onDidSaveTextDocument(e => this.onDidSaveTextDocument(e)))
         this.disposables.push(vscode.workspace.onDidCloseTextDocument(e => this.onDidSaveTextDocument(e)))
     }
@@ -26,7 +26,6 @@ export class Container {
         this.revealSlides.update()
         this.server.syncCurrentSlideInBrowser(this.revealSlides.currentSlideId)
         this.refreshWebview()
-        this.logger('currentSlideId [' + this.revealSlides.currentSlideId + ']')
     }
 
     public onDidCloseTextDocument(e: vscode.TextDocument) {
@@ -38,26 +37,32 @@ export class Container {
         this.server.shutdown()
     }
 
-    public async exportAsHtml(targetFile: string) {
+    public async exportAsHtml(targetFile: string, writer: (fileName: string, content: string) => void) {
         if(this.server.exportUrl) {
             try{
                 const resp = await Axios.get(this.server.exportUrl)
-                fs.writeFileSync(targetFile, resp.data)
+                writer(targetFile, resp.data)
                 vscode.window.showInformationMessage(`Exported slides as html to file: ${targetFile}`)
             } catch (e) {
+                if(this.logger) {
+                    this.logger(e)
+                }
                 vscode.window.showErrorMessage(`Error while exporting: ${e.message}`)
             }
         }
     }
 
-    public async exportAsInlinedHtml(targetFile: string) {
+    public async exportAsInlinedHtml(targetFile: string, writer: (fileName: string, content: string) => void) {
         if(this.server.exportInlinedUrl) {
             try{
                 const resp = await Axios.get(this.server.exportInlinedUrl)
                 const inlinedHtml = await this.inline(resp.data)
-                fs.writeFileSync(targetFile, inlinedHtml)
+                writer(targetFile, inlinedHtml)
                 vscode.window.showInformationMessage(`Exported slides as inlined html to file: ${targetFile}`)
             } catch (e) {
+                if(this.logger) {
+                    this.logger(e)
+                }
                 vscode.window.showErrorMessage(`Error while exporting: ${e.message}`)
             }
         }
@@ -90,6 +95,14 @@ export class Container {
 
     public get browserUrl() {
         return `${this.server.previewUrl}${this.revealSlides.currentSlideId}`
+    }
+
+    public get exportUrl() {
+        return this.server.exportUrl
+    }
+
+    public get exportInlinedUrl() {
+        return this.server.exportInlinedUrl
     }
 
     private refreshWebview() {
