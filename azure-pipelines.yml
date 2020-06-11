@@ -1,5 +1,6 @@
 trigger:
 - master
+- add-tests
 
 strategy:
   matrix:
