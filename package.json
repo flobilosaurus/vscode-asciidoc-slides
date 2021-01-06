@@ -90,7 +90,7 @@
 		"@types/ws": "^7.2.3",
 		"asciidoctor": "^2.1.1",
 		"asciidoctor-kroki": "^0.7.0",
-		"axios": "^0.19.2",
+		"axios": "^0.21.1",
 		"chai": "^4.2.0",
 		"font-awesome": "^4.7.0",
 		"highlight.js": "^9.18.1",
