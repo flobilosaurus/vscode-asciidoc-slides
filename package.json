@@ -101,7 +101,7 @@
 		"koa-logger": "^3.2.1",
 		"koa-send": "^5.0.0",
 		"open": "^7.0.3",
-		"reveal.js": "^3.9.2",
+		"reveal.js": "^4.3.0",
 		"slash": "^3.0.0",
 		"web-resource-inliner": "^4.3.4"
 	}
