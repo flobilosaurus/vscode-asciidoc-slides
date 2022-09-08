@@ -19,6 +19,7 @@ export type AsciidocAttributes = {
     imageDir: string,
     revealJsTheme: string,
     revealJsCustomTheme?: string,
+    revealJsSlideNumber: string,
     hightlightJsTheme: string,
 }
 
@@ -26,6 +27,7 @@ export type RevealConfiguration = {
     absolutePath: string,
     title: string,
     themeCss: string,
+    slideNumber: string,
     hightlightJsThemeCss: string,
     isInlined: boolean
 }
@@ -75,6 +77,7 @@ export class RevealSlides {
             imageDir: accessor.getAttributeOrDefault('imagesdir', ''),
             revealJsTheme: accessor.getAttributeOrDefault('revealjs_theme', 'night'),
             revealJsCustomTheme: accessor.getAttributeOrDefault('revealjs_customtheme', undefined),
+            revealJsSlideNumber: accessor.getAttributeOrDefault('revealjs_slidenumber', "false"),
             hightlightJsTheme: accessor.getAttributeOrDefault('hightlightjs-theme', 'monokai')
         }
 
@@ -85,6 +88,7 @@ export class RevealSlides {
         return {
             absolutePath: '',
             title: asciidocAttributes.title,
+            slideNumber: asciidocAttributes.revealJsSlideNumber,
             themeCss: asciidocAttributes.revealJsCustomTheme ? asciidocAttributes.revealJsCustomTheme : `libs/reveal.js/css/theme/${asciidocAttributes.revealJsTheme}.css`,
             hightlightJsThemeCss: `libs/highlight.js/styles/${asciidocAttributes.hightlightJsTheme}.css`,
             isInlined: false
