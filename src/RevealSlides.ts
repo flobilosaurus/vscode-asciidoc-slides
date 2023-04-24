@@ -16,10 +16,14 @@ kroki.register(asciidoctor.Extensions)
 
 export type AsciidocAttributes = {
     title: string,
+    authors: string,
+    revdate: string,
     imageDir: string,
     revealJsTheme: string,
     revealJsCustomTheme?: string,
     revealJsSlideNumber: string,
+    revealJsCenter: boolean,
+    revealJsControls: boolean,
     hightlightJsTheme: string,
 }
 
@@ -28,6 +32,8 @@ export type RevealConfiguration = {
     title: string,
     themeCss: string,
     slideNumber: string,
+    center: boolean,
+    controls: boolean,
     hightlightJsThemeCss: string,
     isInlined: boolean
 }
@@ -37,6 +43,9 @@ function docAccessor(asciidocText: string, docDir: string) {
     const doc: Asciidoctor.Document = asciidoctor.load(asciidocText, {safe: 'safe', header_footer: true, attributes: {docDir}})
     return {
         getAttributeOrDefault: (key: string, defaultValue?: string) => {
+            return doc.hasAttribute(key) ? doc.getAttribute(key) : defaultValue
+        },
+        getAttributeOrDefaultBool: (key: string, defaultValue?: boolean) => {
             return doc.hasAttribute(key) ? doc.getAttribute(key) : defaultValue
         },
         getTitle: () => {
@@ -78,6 +87,8 @@ export class RevealSlides {
             revealJsTheme: accessor.getAttributeOrDefault('revealjs_theme', 'night'),
             revealJsCustomTheme: accessor.getAttributeOrDefault('revealjs_customtheme', undefined),
             revealJsSlideNumber: accessor.getAttributeOrDefault('revealjs_slidenumber', "false"),
+            revealJsCenter: accessor.getAttributeOrDefaultBool('revealjs_center', true),
+            revealJsControls: accessor.getAttributeOrDefaultBool('revealjs_controls', true),
             hightlightJsTheme: accessor.getAttributeOrDefault('hightlightjs-theme', 'monokai')
         }
 
@@ -88,7 +99,11 @@ export class RevealSlides {
         return {
             absolutePath: '',
             title: asciidocAttributes.title,
+            authors : asciidocAttributes.authors,
+            revdate : asciidocAttributes.revdate,
             slideNumber: asciidocAttributes.revealJsSlideNumber,
+            center : asciidocAttributes.revealJsCenter,
+            controls: asciidocAttributes.revealJsControls,
             themeCss: asciidocAttributes.revealJsCustomTheme ? asciidocAttributes.revealJsCustomTheme : `libs/reveal.js/css/theme/${asciidocAttributes.revealJsTheme}.css`,
             hightlightJsThemeCss: `libs/highlight.js/styles/${asciidocAttributes.hightlightJsTheme}.css`,
             isInlined: false

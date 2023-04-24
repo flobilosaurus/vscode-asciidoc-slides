@@ -1,6 +1,20 @@
+// Theme to use (see https://revealjs.com/themes/)
 :revealjs_theme: moon
-= asciidoc slides extension
+// Custom Theme CSS
+// :revealjs_customtheme: styles/styles.css
+// Slide numbers format https://revealjs.com/slide-numbers/
+:revealjs_slideNumber: h/v
+// Vertically centered?
+:revealjs_center: true
+// Show slide controls?
+:revealjs_controls: true
 
+= Presentation Title
+Author
+12/03/2023
+
+
+[transition=zoom]
 == Images
 
 [source, asciidoc]
@@ -12,6 +26,7 @@ results in:
 
 image::media/morpheus.jpg[]
 
+[transition=zoom]
 === Background Images
 
 [source, asciidoc]
@@ -23,6 +38,7 @@ results in:
 
 image::media/background.jpg[background, size=cover]
 
+[transition=zoom]
 === Background Gifs
 
 [source, asciidoc]
