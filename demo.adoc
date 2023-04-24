@@ -224,3 +224,7 @@ results in:
 
 [quote, Albert Einstein]
 A person who never made a mistake never tried anything new.
+
+== Formulas
+
+$ J(\theta_0,\theta_1) = \sum_{i=0} $
