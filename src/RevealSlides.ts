@@ -25,6 +25,9 @@ export type AsciidocAttributes = {
     revealJsCenter: boolean,
     revealJsControls: boolean,
     hightlightJsTheme: string,
+    revealJsTransition: string,
+    revealJsTransitionSpeed: string,
+    revealJsBackgroundTransition: string,
 }
 
 export type RevealConfiguration = {
@@ -36,6 +39,9 @@ export type RevealConfiguration = {
     controls: boolean,
     hightlightJsThemeCss: string,
     isInlined: boolean
+    transition: string,
+    transitionSpeed: string,
+    backgroundTransition: string,
 }
 
 function docAccessor(asciidocText: string, docDir: string) {
@@ -89,7 +95,10 @@ export class RevealSlides {
             revealJsSlideNumber: accessor.getAttributeOrDefault('revealjs_slidenumber', "false"),
             revealJsCenter: accessor.getAttributeOrDefaultBool('revealjs_center', true),
             revealJsControls: accessor.getAttributeOrDefaultBool('revealjs_controls', true),
-            hightlightJsTheme: accessor.getAttributeOrDefault('hightlightjs-theme', 'monokai')
+            hightlightJsTheme: accessor.getAttributeOrDefault('hightlightjs-theme', 'monokai'),
+            revealJsTransition: accessor.getAttributeOrDefault('revealjs_transition', "slide"),
+            revealJsTransitionSpeed: accessor.getAttributeOrDefault('revealjs_transitionspeed', "default"),
+            revealJsBackgroundTransition: accessor.getAttributeOrDefault('revealjs_backgroundtransition', "fade"),
         }
 
         return attributes
@@ -106,7 +115,10 @@ export class RevealSlides {
             controls: asciidocAttributes.revealJsControls,
             themeCss: asciidocAttributes.revealJsCustomTheme ? asciidocAttributes.revealJsCustomTheme : `libs/reveal.js/css/theme/${asciidocAttributes.revealJsTheme}.css`,
             hightlightJsThemeCss: `libs/highlight.js/styles/${asciidocAttributes.hightlightJsTheme}.css`,
-            isInlined: false
+            isInlined: false,
+            transition: asciidocAttributes.revealJsTransition,
+            transitionSpeed: asciidocAttributes.revealJsTransitionSpeed,
+            backgroundTransition:asciidocAttributes.revealJsBackgroundTransition,
         }
     }
 

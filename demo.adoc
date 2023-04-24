@@ -8,13 +8,21 @@
 :revealjs_center: true
 // Show slide controls?
 :revealjs_controls: true
+// Slides transition: none/fade/slide/convex/concave/zoom
+:revealjs_transition: concave
+// Slides transition speed: default/fast/slow
+:revealjs_transitionSpeed: slow
+// Slide background transition: none/fade/slide/convex/concave/zoom
+:revealjs_backgroundTransition: none
+// Source highlighting theme
+:hightlightjs-theme: nord
 
 = Presentation Title
 Author
 12/03/2023
 
 
-[transition=zoom]
+[transition=none]
 == Images
 
 [source, asciidoc]
@@ -26,7 +34,7 @@ results in:
 
 image::media/morpheus.jpg[]
 
-[transition=zoom]
+[transition=none]
 === Background Images
 
 [source, asciidoc]
@@ -38,7 +46,7 @@ results in:
 
 image::media/background.jpg[background, size=cover]
 
-[transition=zoom]
+[transition=none]
 === Background Gifs
 
 [source, asciidoc]
@@ -58,6 +66,7 @@ image::media/suprise.gif[background, size=cover]
 [background-video="https://video.de/my.mp4",options="loop,muted"]
 --
 
+[transition=none]
 == PlantUml
 [source, asciidoc]
 --
