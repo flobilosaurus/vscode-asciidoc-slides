@@ -1,7 +1,7 @@
 # Change Log
 
 ## [1.4.0]
-- feature: more reveal.js parameters can be set in presentation (:revealjs_slidenumber:, :revealjs_center:, :revealjs_controls:, :revealjs_transition:, :revealjs_transitionspeed:, :revealjs_backgroundtransition:)
+- feature: more reveal.js parameters can be set in presentation (:revealjs_slidenumber:, :revealjs_center:, :revealjs_controls:, :revealjs_controlsLayout:, :revealjs_controlsBackArrows:, :revealjs_progress:, :revealjs_transition:, :revealjs_transitionspeed:, :revealjs_backgroundtransition:)
 - feature: autocomplete for reveal.js parameters
 - feature: use AsciiDoc author and revdate on title slide and HTML header
 - update JS dependencies
