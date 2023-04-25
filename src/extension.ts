@@ -88,6 +88,7 @@ export function activate(context: vscode.ExtensionContext) {
 							var subCompletionItems : vscode.CompletionItem[] = [];
 							filteredValues[0].values.forEach((item) => {
 								let ci = new vscode.CompletionItem(item, vscode.CompletionItemKind.Value);
+								ci.sortText = "_";
 								subCompletionItems.push(ci)
 							} )
 							return subCompletionItems;
