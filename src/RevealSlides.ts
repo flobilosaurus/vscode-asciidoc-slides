@@ -98,7 +98,6 @@ export class RevealSlides {
             imageDir: accessor.getAttributeOrDefault('imagesdir', ''),
             revealJsTheme: accessor.getAttributeOrDefault('revealjs_theme', 'night'),
             revealJsCustomTheme: accessor.getAttributeOrDefault('revealjs_customtheme', undefined),
-            revealJsSlideNumber: accessor.getAttributeOrDefault('revealjs_slidenumber', "false"),
             revealJsCenter: accessor.getAttributeOrDefaultBool('revealjs_center', true),
             revealJsControls: accessor.getAttributeOrDefaultBool('revealjs_controls', true),
             revealJsControlsLayout: accessor.getAttributeOrDefault('revealjs_controlslayout', 'bottom-right'),
@@ -109,6 +108,12 @@ export class RevealSlides {
             revealJsTransitionSpeed: accessor.getAttributeOrDefault('revealjs_transitionspeed', "default"),
             revealJsBackgroundTransition: accessor.getAttributeOrDefault('revealjs_backgroundtransition', "fade"),
         }
+
+        // Slide number can be either boolan (we should not quote it) or string (should be quoted)
+        let value = accessor.getAttributeOrDefault('revealjs_slidenumber', "false");
+        if (value !== "true" && value !== "false")
+            value = "\"" + value + "\"";
+        attributes['revealJsSlideNumber'] = value;
 
         return attributes
     }
