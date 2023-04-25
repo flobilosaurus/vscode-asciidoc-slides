@@ -42,6 +42,21 @@ export function activate(context: vscode.ExtensionContext) {
 			'values' : ['true', 'false'],
 		},
 		{
+			'label' : ':revealjs_controlsLayout:',
+			'detail' : 'Determines where controls appear, "edges" or "bottom-right"',
+			'values' : ['edges', 'bottom-right'],
+		},
+		{
+			'label' : ':revealjs_controlsBackArrows:',
+			'detail' : 'Visibility rule for backwards navigation arrows',
+			'values' : ['faded', 'hidden', 'visible'],
+		},
+		{
+			'label' : ':revealjs_progress:',
+			'detail' : 'Display a presentation progress bar',
+			'values' : ['true', 'false'],
+		},
+		{
 			'label' : ':revealjs_transition:',
 			'detail' : 'Slides transition type',
 			'values' : ['none', 'fade', 'slide', 'convex', 'concave', 'zoom'],
