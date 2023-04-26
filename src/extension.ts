@@ -89,29 +89,46 @@ export function activate(context: vscode.ExtensionContext) {
 		{
 			provideCompletionItems(document: vscode.TextDocument, position: vscode.Position)
 			{
-				const currentText = document.lineAt(position).text.replace(/\s/g, '');
-				if (currentText.length) {
+				const currentText = document.lineAt(position).text;
+				const currentTextNoSpaces = currentText.replace(/\s/g, '');
+				if (currentTextNoSpaces.length) {
 					// Find all completion items fitting current string
-					var filtered = completionItems.filter(x => x.label.startsWith(currentText));
+					var filtered = completionItems.filter(x => x.label.startsWith(currentTextNoSpaces));
 					if (filtered.length == 0)
 						return undefined;
 					else if (filtered.length == 1)
 					{
-						// For filtered property try to propose values
-						var filteredValues = completionItemsJson.filter(x => x.label.startsWith(currentText));
-						if (filteredValues.length == 1 && filteredValues[0].values) {
-							var subCompletionItems : vscode.CompletionItem[] = [];
-							filteredValues[0].values.forEach((item) => {
-								let ci = new vscode.CompletionItem(item, vscode.CompletionItemKind.Value);
-								ci.sortText = "_";
-								subCompletionItems.push(ci)
-							} )
-							return subCompletionItems;
+						if (currentText.substring(currentText.length-1) == ' ') {
+							// For filtered property try to propose values
+							var filteredValues = completionItemsJson.filter(x => x.label.startsWith(currentTextNoSpaces));
+							if (filteredValues.length == 1 && filteredValues[0].values) {
+								var subCompletionItems : vscode.CompletionItem[] = [];
+								filteredValues[0].values.forEach((item) => {
+									let ci = new vscode.CompletionItem(item, vscode.CompletionItemKind.Value);
+									ci.sortText = "_";
+									subCompletionItems.push(ci)
+								} )
+								return subCompletionItems;
+							}
+							else
+								// No separator after value - no suggestions
+								return undefined;
 						}
+						else
+							if (currentTextNoSpaces === filtered[0].label)
+								// Everything already entered. Nothing to suggest
+								return undefined;
+							else
+								// The only option
+								return filtered;
+					}
+					else
+					{
+						return filtered;
 					}
 				}
 
-				return completionItems;
+				return undefined;
 			}
 		},
 		':' // triggered whenever a ':' is being typed
