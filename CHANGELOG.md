@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.4.0]
+- feature: more reveal.js parameters can be set in presentation (:revealjs_slidenumber:, :revealjs_center:, :revealjs_controls:, :revealjs_controlsLayout:, :revealjs_controlsBackArrows:, :revealjs_progress:, :revealjs_transition:, :revealjs_transitionspeed:, :revealjs_backgroundtransition:)
+- feature: autocomplete for reveal.js parameters
+- feature: use AsciiDoc author and revdate on title slide and HTML header
+- update JS dependencies
+
 ## [1.3.0]
 
 - feature: printing or exporting as pdf via url parameter `?print-pdf` (see: [revealjs - pdf export](https://github.com/hakimel/reveal.js/#instructions-1))

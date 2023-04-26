@@ -1,6 +1,28 @@
+// Theme to use (see https://revealjs.com/themes/)
 :revealjs_theme: moon
-= asciidoc slides extension
+// Custom Theme CSS
+// :revealjs_customtheme: styles/styles.css
+// Slide numbers format https://revealjs.com/slide-numbers/
+:revealjs_slideNumber: h/v
+// Vertically centered?
+:revealjs_center: true
+// Show slide controls?
+:revealjs_controls: true
+// Slides transition: none/fade/slide/convex/concave/zoom
+:revealjs_transition: concave
+// Slides transition speed: default/fast/slow
+:revealjs_transitionSpeed: slow
+// Slide background transition: none/fade/slide/convex/concave/zoom
+:revealjs_backgroundTransition: none
+// Source highlighting theme
+:hightlightjs-theme: nord
 
+= Presentation Title
+Author
+12/03/2023
+
+
+[transition=none]
 == Images
 
 [source, asciidoc]
@@ -12,6 +34,7 @@ results in:
 
 image::media/morpheus.jpg[]
 
+[transition=none]
 === Background Images
 
 [source, asciidoc]
@@ -23,6 +46,7 @@ results in:
 
 image::media/background.jpg[background, size=cover]
 
+[transition=none]
 === Background Gifs
 
 [source, asciidoc]
@@ -42,6 +66,7 @@ image::media/suprise.gif[background, size=cover]
 [background-video="https://video.de/my.mp4",options="loop,muted"]
 --
 
+[transition=none]
 == PlantUml
 [source, asciidoc]
 --
@@ -224,3 +249,7 @@ results in:
 
 [quote, Albert Einstein]
 A person who never made a mistake never tried anything new.
+
+== Formulas
+
+$ J(\theta_0,\theta_1) = \sum_{i=0} $

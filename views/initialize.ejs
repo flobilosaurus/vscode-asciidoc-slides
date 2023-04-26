@@ -3,11 +3,21 @@
     Reveal.initialize({
         hash: true,
         history: true,
+        center: <%= center %> ,
+        controls: <%= controls %>,
+        controlsLayout: '<%= controlsLayout %>',
+        controlsBackArrows: '<%= controlsBackArrows %>',
+        progress: <%= progress %>,
         pdfMaxPagesPerSlide: 1,
+        slideNumber: <%- slideNumber %>,
+        transition: '<%= transition %>',
+        transitionSpeed: '<%= transitionSpeed %>',
+        backgroundTransition: '<%= backgroundTransition %>',
         dependencies: [
             { src: '<%= absolutePath %>libs/reveal.js/plugin/notes/notes.js', async: true },
             { src: '<%= absolutePath %>libs/reveal.js/plugin/zoom-js/zoom.js', async: true },
             { src: '<%= absolutePath %>libs/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); }},
+            { src: '<%= absolutePath %>libs/reveal.js/plugin/math/math.js', async: true },
         ]
     })
 </script>

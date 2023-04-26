@@ -16,18 +16,38 @@ kroki.register(asciidoctor.Extensions)
 
 export type AsciidocAttributes = {
     title: string,
+    authors: string,
+    revdate: string,
     imageDir: string,
     revealJsTheme: string,
     revealJsCustomTheme?: string,
+    revealJsSlideNumber: string,
+    revealJsCenter: boolean,
+    revealJsControls: boolean,
+    revealJsControlsLayout: string,
+    revealJsControlsBackArrows: string,
+    revealJsProgress: boolean,
     hightlightJsTheme: string,
+    revealJsTransition: string,
+    revealJsTransitionSpeed: string,
+    revealJsBackgroundTransition: string,
 }
 
 export type RevealConfiguration = {
     absolutePath: string,
     title: string,
     themeCss: string,
+    slideNumber: string,
+    center: boolean,
+    controls: boolean,
+    controlsLayout: string,
+    controlsBackArrows: string,
+    progress: boolean,
     hightlightJsThemeCss: string,
     isInlined: boolean
+    transition: string,
+    transitionSpeed: string,
+    backgroundTransition: string,
 }
 
 function docAccessor(asciidocText: string, docDir: string) {
@@ -35,6 +55,9 @@ function docAccessor(asciidocText: string, docDir: string) {
     const doc: Asciidoctor.Document = asciidoctor.load(asciidocText, {safe: 'safe', header_footer: true, attributes: {docDir}})
     return {
         getAttributeOrDefault: (key: string, defaultValue?: string) => {
+            return doc.hasAttribute(key) ? doc.getAttribute(key) : defaultValue
+        },
+        getAttributeOrDefaultBool: (key: string, defaultValue?: boolean) => {
             return doc.hasAttribute(key) ? doc.getAttribute(key) : defaultValue
         },
         getTitle: () => {
@@ -75,8 +98,22 @@ export class RevealSlides {
             imageDir: accessor.getAttributeOrDefault('imagesdir', ''),
             revealJsTheme: accessor.getAttributeOrDefault('revealjs_theme', 'night'),
             revealJsCustomTheme: accessor.getAttributeOrDefault('revealjs_customtheme', undefined),
-            hightlightJsTheme: accessor.getAttributeOrDefault('hightlightjs-theme', 'monokai')
+            revealJsCenter: accessor.getAttributeOrDefaultBool('revealjs_center', true),
+            revealJsControls: accessor.getAttributeOrDefaultBool('revealjs_controls', true),
+            revealJsControlsLayout: accessor.getAttributeOrDefault('revealjs_controlslayout', 'bottom-right'),
+            revealJsControlsBackArrows: accessor.getAttributeOrDefault('revealjs_controlsbackarrows', 'faded'),
+            revealJsProgress: accessor.getAttributeOrDefaultBool('revealjs_progress', true),
+            hightlightJsTheme: accessor.getAttributeOrDefault('hightlightjs-theme', 'monokai'),
+            revealJsTransition: accessor.getAttributeOrDefault('revealjs_transition', "slide"),
+            revealJsTransitionSpeed: accessor.getAttributeOrDefault('revealjs_transitionspeed', "default"),
+            revealJsBackgroundTransition: accessor.getAttributeOrDefault('revealjs_backgroundtransition', "fade"),
         }
+
+        // Slide number can be either boolan (we should not quote it) or string (should be quoted)
+        let value = accessor.getAttributeOrDefault('revealjs_slidenumber', "false");
+        if (value !== "true" && value !== "false")
+            value = "\"" + value + "\"";
+        attributes['revealJsSlideNumber'] = value;
 
         return attributes
     }
@@ -85,9 +122,20 @@ export class RevealSlides {
         return {
             absolutePath: '',
             title: asciidocAttributes.title,
+            authors : asciidocAttributes.authors,
+            revdate : asciidocAttributes.revdate,
+            slideNumber: asciidocAttributes.revealJsSlideNumber,
+            center : asciidocAttributes.revealJsCenter,
+            controls: asciidocAttributes.revealJsControls,
+            controlsLayout: asciidocAttributes.revealJsControlsLayout,
+            controlsBackArrows: asciidocAttributes.revealJsControlsBackArrows,
+            progress : asciidocAttributes.revealJsProgress,
             themeCss: asciidocAttributes.revealJsCustomTheme ? asciidocAttributes.revealJsCustomTheme : `libs/reveal.js/css/theme/${asciidocAttributes.revealJsTheme}.css`,
             hightlightJsThemeCss: `libs/highlight.js/styles/${asciidocAttributes.hightlightJsTheme}.css`,
-            isInlined: false
+            isInlined: false,
+            transition: asciidocAttributes.revealJsTransition,
+            transitionSpeed: asciidocAttributes.revealJsTransitionSpeed,
+            backgroundTransition:asciidocAttributes.revealJsBackgroundTransition,
         }
     }
 
