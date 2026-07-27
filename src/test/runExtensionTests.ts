@@ -48,7 +48,12 @@ async function main() {
         console.error('Failed to run extension tests', error)
         process.exitCode = 1
     } finally {
-        ;(fs as any).rmSync(testStateDirectory, { recursive: true, force: true })
+        fs.rmSync(testStateDirectory, {
+            recursive: true,
+            force: true,
+            maxRetries: 10,
+            retryDelay: 100
+        })
     }
 }
 

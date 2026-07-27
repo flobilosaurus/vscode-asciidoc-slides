@@ -29,7 +29,12 @@ export async function createTestFixture(extension: '.adoc' | '.txt' = '.adoc'): 
         outputPath,
         async cleanup() {
             await vscode.commands.executeCommand('workbench.action.closeAllEditors')
-            ;(fs as any).rmSync(directory, { recursive: true, force: true })
+            fs.rmSync(directory, {
+                recursive: true,
+                force: true,
+                maxRetries: 10,
+                retryDelay: 100
+            })
         }
     }
 }
