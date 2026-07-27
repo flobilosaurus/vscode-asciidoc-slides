@@ -1,0 +1,60 @@
+name: Automated Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    env:
+      VSCODE_TEST_VERSION: '1.130.0'
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: yarn
+
+      - name: Install Yarn Classic
+        run: npm install --global yarn@1.22.22
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Compile
+        run: yarn compile
+
+      - name: Run Node tests
+        run: yarn test:node
+
+      - name: Run extension-host tests (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a yarn test:extension
+
+      - name: Run extension-host tests
+        if: runner.os != 'Linux'
+        run: yarn test:extension
+
+      - name: Generate coverage
+        if: runner.os == 'Linux'
+        run: yarn test:coverage
+
+      - name: Upload Linux coverage
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-coverage-linux
+          path: coverage/

@@ -7,9 +7,15 @@ import * as send from 'koa-send'
 const slash = require('slash')
 const websocket = require('koa-easy-ws')
 import * as path from 'path'
-import { RevealSlides } from './RevealSlides'
+import { RevealConfiguration } from './RevealDocument'
 import WebSocket = require('ws')
 
+export interface RevealSlidesSource {
+    readonly revealJsSlidesHtml: string
+    readonly configuration: RevealConfiguration
+    readonly absoluteDocumentDirectory: string
+    getSlidesHtmlForExport(forInlined: boolean): string
+}
 
 export class RevealServer {
     private readonly app: Koa
@@ -17,9 +23,10 @@ export class RevealServer {
     private readonly server: http.Server
     private readonly websocketServer: WebSocket.Server
     private logger: (line: string) => void
-    private revealSlides : RevealSlides
+    private revealSlides: RevealSlidesSource
+    private shutdownPromise?: Promise<void>
 
-    constructor(extensionPath: string, revealSlides: RevealSlides, logger: (line: string) => void) {
+    constructor(extensionPath: string, revealSlides: RevealSlidesSource, logger: (line: string) => void) {
         this.revealSlides = revealSlides
         this.extensionPath = extensionPath
         this.logger = logger
@@ -130,8 +137,18 @@ export class RevealServer {
         return `${this.serverUrl}/export-inlined`
     }
 
-    public shutdown() {
+    public shutdown(): Promise<void> {
+        if (this.shutdownPromise) {
+            return this.shutdownPromise
+        }
+
         this.logger('asciidoc slides server shutdown')
-        this.server.close()
+        this.shutdownPromise = Promise.all([
+            new Promise<void>(resolve => this.websocketServer.close(() => resolve())),
+            new Promise<void>((resolve, reject) => {
+                this.server.close(error => error ? reject(error) : resolve())
+            })
+        ]).then(() => undefined)
+        return this.shutdownPromise
     }
 }

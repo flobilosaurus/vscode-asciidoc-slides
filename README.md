@@ -1,6 +1,6 @@
 # AsciiDoc Slides for Visual Studio Code
 
-![Azure Badge](https://dev.azure.com/flobilosaurus/vscode-asciidoc-slides/_apis/build/status/flobilosaurus.vscode-asciidoc-slides?branchName=master)
+[![Automated Tests](https://github.com/flobilosaurus/vscode-asciidoc-slides/actions/workflows/test.yml/badge.svg)](https://github.com/flobilosaurus/vscode-asciidoc-slides/actions/workflows/test.yml)
 [![Issues Badge](https://img.shields.io/github/issues-raw/flobilosaurus/vscode-asciidoc-slides)](https://github.com/flobilosaurus/vscode-asciidoc-slides/issues)
 [![Rating Badge](https://img.shields.io/visual-studio-marketplace/stars/flobilosaurus.vscode-asciidoc-slides)](https://marketplace.visualstudio.com/items?itemName=flobilosaurus.vscode-asciidoc-slides)
 [![Demo Badge](https://img.shields.io/badge/Demo-here-blue)](https://flobilosaurus.github.io/vscode-asciidoc-slides)
@@ -47,6 +47,53 @@ Inlining currently does not work for:
 * Background Videos
 * Background IFrames
 * Probably a lot more ...
+
+## Development
+
+Use Yarn Classic as the package manager:
+
+```bash
+yarn --frozen-lockfile
+```
+
+Compile TypeScript and run the fast Node unit/integration suite without launching VS Code:
+
+```bash
+yarn compile
+yarn test:node
+```
+
+Run the extension-host smoke and lifecycle suite separately:
+
+```bash
+yarn test:extension
+```
+
+Extension tests download/reuse VS Code `1.130.0`, use isolated temporary user-data and extension directories, and require a graphical environment. On headless Linux, run them through Xvfb:
+
+```bash
+xvfb-run -a yarn test:extension
+```
+
+Override the pinned host intentionally with `VSCODE_TEST_VERSION`, for example:
+
+```bash
+VSCODE_TEST_VERSION=stable yarn test:extension
+```
+
+Run all automated suites (compile, Node tests, then extension-host tests):
+
+```bash
+yarn test
+```
+
+Generate Node-suite text and LCOV coverage reports:
+
+```bash
+yarn test:coverage
+```
+
+Coverage is written to `coverage/`, including `coverage/lcov.info`. Coverage is informational and has no percentage gate. GitHub Actions runs compile, Node, and extension-host checks on Linux, macOS, and Windows, then uploads Linux coverage as an artifact.
 
 ### [Kroki](https://github.com/Mogztter/asciidoctor-kroki) integration
 

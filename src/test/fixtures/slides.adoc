@@ -1,0 +1,22 @@
+= Fixture Presentation
+:imagesdir: images
+:revealjs_theme: league
+:hightlightjs-theme: github
+
+Title preamble.
+
+== First Slide
+
+First body.
+
+=== Nested Slide
+
+Nested body with image::sample.png[].
+
+== Second Slide
+
+Second body links to link:asset.txt[a local resource].
+
+=== Final Nested Slide
+
+Final nested body.

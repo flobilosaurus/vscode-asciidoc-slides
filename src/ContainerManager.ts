@@ -1,3 +1,4 @@
+import * as path from 'path'
 import * as vscode from 'vscode'
 import { Container } from './Container'
 export class ContainerManager {
@@ -16,7 +17,11 @@ export class ContainerManager {
         return {
             andDo: async (action: (editor: vscode.TextEditor, container: Container) => void) => {
                 const editor = vscode.window.activeTextEditor
-                if(editor && editor.document && editor.document.languageId === 'asciidoc') {
+                const isAsciidoc = editor && editor.document && (
+                    editor.document.languageId === 'asciidoc' ||
+                    ['.adoc', '.asciidoc', '.asc', '.ad'].includes(path.extname(editor.document.fileName).toLowerCase())
+                )
+                if (editor && isAsciidoc) {
                     const container = this.getOrCreateContainer(editor)
                     action(editor, container)
                 } else {

@@ -1,26 +1,67 @@
 import Axios from 'axios'
 import * as fs from 'fs'
+import * as path from 'path'
 import * as vscode from 'vscode'
 import { html as inlineHtml } from 'web-resource-inliner'
 import { RevealServer } from './RevealServer'
 import { RevealSlides } from './RevealSlides'
 
+export interface ContainerSlides {
+    readonly editor: vscode.TextEditor
+    readonly currentSlideId: string
+    update(): void
+}
+
+export interface ContainerServer {
+    readonly previewUrl: string
+    readonly exportUrl: string
+    readonly exportInlinedUrl: string
+    syncCurrentSlideInBrowser(slideId: string): void
+    shutdown(): Promise<void>
+}
+
+export interface ContainerDependencies {
+    createRevealSlides(editor: vscode.TextEditor): ContainerSlides
+    createRevealServer(extensionPath: string, slides: ContainerSlides, logger: (line: string) => void): ContainerServer
+}
+
+export interface DocumentEventSource {
+    onDidSaveTextDocument(listener: (document: vscode.TextDocument) => any): vscode.Disposable
+    onDidCloseTextDocument(listener: (document: vscode.TextDocument) => any): vscode.Disposable
+}
+
+const defaultDependencies: ContainerDependencies = {
+    createRevealSlides: editor => new RevealSlides(editor),
+    createRevealServer: (extensionPath, slides, logger) =>
+        new RevealServer(extensionPath, slides as RevealSlides, logger)
+}
+
 export class Container {
-    private revealSlides: RevealSlides
-    private server: RevealServer;
+    private revealSlides: ContainerSlides
+    private server: ContainerServer
     private webviewPanel?: vscode.WebviewPanel
     private logger: (line: string) => void
     private disposables: vscode.Disposable[] = []
-    constructor(context: vscode.ExtensionContext, editor: vscode.TextEditor, logger: (line: string) => void) {
+    private disposed = false
+
+    constructor(
+        context: vscode.ExtensionContext,
+        editor: vscode.TextEditor,
+        logger: (line: string) => void,
+        dependencies: ContainerDependencies = defaultDependencies,
+        eventSource: DocumentEventSource = vscode.workspace
+    ) {
         this.logger = logger
-        this.revealSlides = new RevealSlides(editor)
-        this.server = new RevealServer(context.extensionPath, this.revealSlides, logger)
-        this.disposables.push(vscode.workspace.onDidSaveTextDocument(e => this.onDidSaveTextDocument(e)))
-        this.disposables.push(vscode.workspace.onDidCloseTextDocument(e => this.onDidSaveTextDocument(e)))
+        this.revealSlides = dependencies.createRevealSlides(editor)
+        this.server = dependencies.createRevealServer(context.extensionPath, this.revealSlides, logger)
+        this.disposables.push(eventSource.onDidSaveTextDocument(e => this.onDidSaveTextDocument(e)))
+        this.disposables.push(eventSource.onDidCloseTextDocument(e => this.onDidCloseTextDocument(e)))
     }
 
     public onDidSaveTextDocument(e: vscode.TextDocument) {
-        if(e.languageId !== 'asciidoc') {
+        const isAsciidoc = e.languageId === 'asciidoc' ||
+            ['.adoc', '.asciidoc', '.asc', '.ad'].includes(path.extname(e.fileName).toLowerCase())
+        if (!isAsciidoc || e.uri.toString() !== this.revealSlides.editor.document.uri.toString()) {
             return
         }
         this.revealSlides.update()
@@ -29,13 +70,22 @@ export class Container {
         this.logger('currentSlideId [' + this.revealSlides.currentSlideId + ']')
     }
 
-    public onDidCloseTextDocument(e: vscode.TextDocument) {
-        if(e !== this.revealSlides.editor.document) {
+    public async onDidCloseTextDocument(e: vscode.TextDocument) {
+        if (e.uri.toString() !== this.revealSlides.editor.document.uri.toString()) {
             return
         }
-        
+
+        await this.dispose()
+    }
+
+    public async dispose() {
+        if (this.disposed) {
+            return
+        }
+
+        this.disposed = true
         this.disposables.forEach(d => d.dispose())
-        this.server.shutdown()
+        await this.server.shutdown()
     }
 
     public async exportAsHtml(targetFile: string) {
