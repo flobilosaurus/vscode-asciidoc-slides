@@ -147,6 +147,10 @@ export class RevealServer {
             new Promise<void>(resolve => this.websocketServer.close(() => resolve())),
             new Promise<void>((resolve, reject) => {
                 this.server.close(error => error ? reject(error) : resolve())
+                const closeAllConnections = (this.server as any).closeAllConnections
+                if (typeof closeAllConnections === 'function') {
+                    closeAllConnections.call(this.server)
+                }
             })
         ]).then(() => undefined)
         return this.shutdownPromise
