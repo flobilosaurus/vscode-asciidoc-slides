@@ -50,23 +50,23 @@ Inlining currently does not work for:
 
 ## Development
 
-Use Node.js 20 or newer and Yarn Classic as the package manager:
+Use Node.js 20 or newer and Bun 1.3.11 as the package manager:
 
 ```bash
-yarn --frozen-lockfile
+bun install --frozen-lockfile
 ```
 
 Compile TypeScript and run the fast Node unit/integration suite without launching VS Code:
 
 ```bash
-yarn compile
-yarn test:node
+bun run compile
+bun run test:node
 ```
 
 Run extension-host smoke, lifecycle, and command-level E2E suites separately:
 
 ```bash
-yarn test:extension
+bun run test:extension
 ```
 
 Command E2E tests execute all four contributed commands against saved temporary AsciiDoc documents in a real VS Code host. They exercise real conversion, localhost preview servers, and HTML file writes while capturing platform boundaries for preview panels, save targets, and browser launches.
@@ -76,25 +76,25 @@ Extension tests do not automate command-palette clicks, native save dialogs, OS 
 Extension tests download/reuse VS Code `1.130.0`, use isolated temporary user-data and extension directories, and require a graphical environment. On headless Linux, run them through Xvfb:
 
 ```bash
-xvfb-run -a yarn test:extension
+xvfb-run -a bun run test:extension
 ```
 
 Override the pinned host intentionally with `VSCODE_TEST_VERSION`, for example:
 
 ```bash
-VSCODE_TEST_VERSION=stable yarn test:extension
+VSCODE_TEST_VERSION=stable bun run test:extension
 ```
 
 Run all automated suites (compile, Node tests, then extension-host tests):
 
 ```bash
-yarn test
+bun run test
 ```
 
 Generate Node-suite text and LCOV coverage reports:
 
 ```bash
-yarn test:coverage
+bun run test:coverage
 ```
 
 Coverage is written to `coverage/`, including `coverage/lcov.info`. Coverage is informational and has no percentage gate. GitHub Actions runs compile, Node, and extension-host checks on Linux, macOS, and Windows, then uploads Linux coverage as an artifact.
