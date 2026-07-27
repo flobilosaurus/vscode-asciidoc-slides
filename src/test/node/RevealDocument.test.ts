@@ -59,7 +59,7 @@ suite('RevealDocument', () => {
             absoluteImagesDirectory
         )
 
-        assert.ok(html.includes(absoluteImagesDirectory))
+        assert.ok(html.includes(absoluteImagesDirectory.replace(/\\/g, '/')))
         assert.ok(html.includes('sample.png'))
     })
 

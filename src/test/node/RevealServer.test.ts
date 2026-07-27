@@ -1,4 +1,5 @@
 import * as assert from 'assert'
+import * as fs from 'fs'
 import * as http from 'http'
 import * as path from 'path'
 import { URL } from 'url'
@@ -99,7 +100,7 @@ suite('RevealServer', () => {
         assert.strictEqual(bundled.status, 200)
         assert.ok(bundled.body.includes('Reveal'))
         assert.strictEqual(local.status, 200)
-        assert.strictEqual(local.body, 'document-local fixture asset\n')
+        assert.strictEqual(local.body, fs.readFileSync(path.join(fixturesDirectory, 'asset.txt'), 'utf8'))
     })
 
     test('generates all URLs from one ephemeral port', () => {
