@@ -50,7 +50,7 @@ Inlining currently does not work for:
 
 ## Development
 
-Use Yarn Classic as the package manager:
+Use Node.js 20 or newer and Yarn Classic as the package manager:
 
 ```bash
 yarn --frozen-lockfile

@@ -50,8 +50,7 @@ app.get("/token", function(req,res) {
 });
 
 var createHash = function(secret) {
-	var cipher = crypto.createCipher('blowfish', secret);
-	return(cipher.final('hex'));
+	return crypto.createHash('sha256').update(secret).digest('hex');
 };
 
 // Actually listen

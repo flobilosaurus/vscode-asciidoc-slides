@@ -1,11 +1,9 @@
 import * as http from 'http'
-import * as Koa from 'koa'
-import * as render from 'koa-ejs'
-import * as favicon from 'koa-favicon'
-import * as koalogger from 'koa-logger'
-import * as send from 'koa-send'
-const slash = require('slash')
-const websocket = require('koa-easy-ws')
+import Koa from 'koa'
+import render from 'koa-ejs'
+import favicon from 'koa-favicon'
+import send from 'koa-send'
+import websocket from 'koa-easy-ws'
 import * as path from 'path'
 import { RevealConfiguration } from './RevealDocument'
 import WebSocket = require('ws')
@@ -82,7 +80,7 @@ export class RevealServer {
         return {
             slides: this.revealSlides.getSlidesHtmlForExport(isInlined), 
             ...this.revealSlides.configuration,
-            absolutePath: slash(this.extensionPath) + '/',
+            absolutePath: this.extensionPath.replace(/\\/g, '/') + '/',
             isInlined,
             isPreview: false
         }
@@ -99,7 +97,7 @@ export class RevealServer {
     
     public syncCurrentSlideInBrowser(slideId: string) {
         this.websocketServer.clients.forEach(function each(client) {
-            if (client.readyState === WebSocket.OPEN) {
+            if (client.readyState === 1) {
               client.send(JSON.stringify({cmd: 'goto', slide: slideId}))
             }
         });

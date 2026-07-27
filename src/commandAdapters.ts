@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import * as open from 'open'
+import open from 'open'
 import { Container } from './Container'
 
 export interface PreviewPanelFactory {

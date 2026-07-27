@@ -30,6 +30,10 @@ export interface DocumentEventSource {
     onDidCloseTextDocument(listener: (document: vscode.TextDocument) => any): vscode.Disposable
 }
 
+function errorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error)
+}
+
 const defaultDependencies: ContainerDependencies = {
     createRevealSlides: editor => new RevealSlides(editor),
     createRevealServer: (extensionPath, slides, logger) =>
@@ -117,7 +121,7 @@ export class Container {
                 fs.writeFileSync(targetFile, resp.data)
                 vscode.window.showInformationMessage(`Exported slides as html to file: ${targetFile}`)
             } catch (e) {
-                vscode.window.showErrorMessage(`Error while exporting: ${e.message}`)
+                vscode.window.showErrorMessage(`Error while exporting: ${errorMessage(e)}`)
             }
         }
     }
@@ -130,7 +134,7 @@ export class Container {
                 fs.writeFileSync(targetFile, inlinedHtml)
                 vscode.window.showInformationMessage(`Exported slides as inlined html to file: ${targetFile}`)
             } catch (e) {
-                vscode.window.showErrorMessage(`Error while exporting: ${e.message}`)
+                vscode.window.showErrorMessage(`Error while exporting: ${errorMessage(e)}`)
             }
         }
     }

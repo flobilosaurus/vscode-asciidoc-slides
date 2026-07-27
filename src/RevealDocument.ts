@@ -1,12 +1,24 @@
-import { Asciidoctor } from 'asciidoctor/types/index'
+interface AsciidoctorSection {
+    getSections(): AsciidoctorSection[]
+    getLineNumber(): number
+    getId(): string
+}
+
+interface AsciidoctorDocument {
+    hasAttribute(name: string): boolean
+    getAttribute(name: string): unknown
+    getAttributes(): Record<string, unknown>
+    getTitle(): string | undefined
+    getSections(): AsciidoctorSection[]
+}
 
 /**
- * Reuse an Opal bridge installed by another Asciidoctor extension when present.
- * Loading a second bridge throws at runtime.
+ * Reveal.js 5 still uses Asciidoctor's Opal runtime. Keep its newest compatible
+ * Asciidoctor and Kroki releases isolated from current native Asciidoctor.js.
  */
-const asciidoctor = ((<any>global).Opal && (<any>global).Opal.Asciidoctor) || require('@asciidoctor/core')()
+const asciidoctor = require('asciidoctor-legacy')()
 const asciidoctorRevealjs = require('@asciidoctor/reveal.js')
-const kroki = require('asciidoctor-kroki')
+const kroki = require('asciidoctor-kroki-legacy')
 asciidoctorRevealjs.register()
 kroki.register(asciidoctor.Extensions)
 
@@ -26,13 +38,13 @@ export type RevealConfiguration = {
     isInlined: boolean
 }
 
-function loadDocument(asciidocText: string, docDir: string, sourcemap: boolean = false): Asciidoctor.Document {
+function loadDocument(asciidocText: string, docDir: string, sourcemap: boolean = false): AsciidoctorDocument {
     return asciidoctor.load(asciidocText, {
         safe: 'safe',
         header_footer: true,
         sourcemap,
         attributes: { docDir }
-    }) as Asciidoctor.Document
+    }) as AsciidoctorDocument
 }
 
 export function extractAsciidocAttributes(asciidocText: string, docDir: string): AsciidocAttributes {
@@ -73,8 +85,8 @@ export function convertToRevealJsSlides(asciidocText: string, docDir: string, im
     }) as string
 }
 
-function flattenSections(sections: Asciidoctor.Section[]): Asciidoctor.Section[] {
-    return sections.reduce((all: Asciidoctor.Section[], section: Asciidoctor.Section) => {
+function flattenSections(sections: AsciidoctorSection[]): AsciidoctorSection[] {
+    return sections.reduce((all: AsciidoctorSection[], section: AsciidoctorSection) => {
         const nested = section.getSections() || []
         return all.concat(section, flattenSections(nested))
     }, [])
