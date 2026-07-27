@@ -13,7 +13,8 @@ export interface TestFixture {
 }
 
 export async function createTestFixture(extension: '.adoc' | '.txt' = '.adoc'): Promise<TestFixture> {
-    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'adoc-slides-command-'))
+    const managedFixtureRoot = process.env.ASCIIDOC_SLIDES_TEST_FIXTURES
+    const directory = fs.mkdtempSync(path.join(managedFixtureRoot || os.tmpdir(), 'adoc-slides-command-'))
     const documentPath = path.join(directory, `fixture${extension}`)
     const outputPath = path.join(directory, 'captured-export.html')
     const content = extension === '.adoc'
@@ -29,12 +30,16 @@ export async function createTestFixture(extension: '.adoc' | '.txt' = '.adoc'): 
         outputPath,
         async cleanup() {
             await vscode.commands.executeCommand('workbench.action.closeAllEditors')
-            fs.rmSync(directory, {
-                recursive: true,
-                force: true,
-                maxRetries: 10,
-                retryDelay: 100
-            })
+            // VS Code can retain document handles on Windows after editors close.
+            // Managed fixtures are deleted by the parent runner after the host exits.
+            if (!managedFixtureRoot) {
+                fs.rmSync(directory, {
+                    recursive: true,
+                    force: true,
+                    maxRetries: 10,
+                    retryDelay: 100
+                })
+            }
         }
     }
 }

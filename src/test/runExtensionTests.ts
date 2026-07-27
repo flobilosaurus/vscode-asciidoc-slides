@@ -30,14 +30,19 @@ async function main() {
     const extensionDevelopmentPath = path.join(testStateDirectory, 'development-extension')
     const userDataDirectory = path.join(testStateDirectory, 'user')
     const extensionsDirectory = path.join(testStateDirectory, 'ext')
+    const fixturesDirectory = path.join(testStateDirectory, 'fixtures')
     const version = process.env.VSCODE_TEST_VERSION || '1.130.0'
 
     try {
         createTestExtension(sourceExtensionPath, extensionDevelopmentPath)
+        fs.mkdirSync(fixturesDirectory)
         await runTests({
             version,
             extensionDevelopmentPath,
             extensionTestsPath,
+            extensionTestsEnv: {
+                ASCIIDOC_SLIDES_TEST_FIXTURES: fixturesDirectory
+            },
             launchArgs: [
                 '--disable-extensions',
                 `--user-data-dir=${userDataDirectory}`,
