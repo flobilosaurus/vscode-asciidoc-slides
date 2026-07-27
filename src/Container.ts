@@ -41,17 +41,21 @@ export class Container {
     private server: ContainerServer
     private webviewPanel?: vscode.WebviewPanel
     private logger: (line: string) => void
+    private extensionPath: string
     private disposables: vscode.Disposable[] = []
     private disposed = false
+    private disposePromise?: Promise<void>
 
     constructor(
         context: vscode.ExtensionContext,
         editor: vscode.TextEditor,
         logger: (line: string) => void,
         dependencies: ContainerDependencies = defaultDependencies,
-        eventSource: DocumentEventSource = vscode.workspace
+        eventSource: DocumentEventSource = vscode.workspace,
+        private onDisposed: (container: Container) => void = () => undefined
     ) {
         this.logger = logger
+        this.extensionPath = context.extensionPath
         this.revealSlides = dependencies.createRevealSlides(editor)
         this.server = dependencies.createRevealServer(context.extensionPath, this.revealSlides, logger)
         this.disposables.push(eventSource.onDidSaveTextDocument(e => this.onDidSaveTextDocument(e)))
@@ -78,14 +82,32 @@ export class Container {
         await this.dispose()
     }
 
-    public async dispose() {
-        if (this.disposed) {
-            return
+    public get isDisposed() {
+        return this.disposed
+    }
+
+    public dispose(): Promise<void> {
+        if (this.disposePromise) {
+            return this.disposePromise
         }
 
         this.disposed = true
         this.disposables.forEach(d => d.dispose())
-        await this.server.shutdown()
+        const panel = this.webviewPanel
+        this.webviewPanel = undefined
+        if (panel) {
+            panel.dispose()
+        }
+        this.disposePromise = this.shutdownAndNotify()
+        return this.disposePromise
+    }
+
+    private async shutdownAndNotify(): Promise<void> {
+        try {
+            await this.server.shutdown()
+        } finally {
+            this.onDisposed(this)
+        }
     }
 
     public async exportAsHtml(targetFile: string) {
@@ -115,7 +137,13 @@ export class Container {
 
     private inline (html: string) {
         return new Promise<string>((resolve,reject) => {
-            inlineHtml({fileContent: html, images: true, svgs: true, scripts: true}, (error, result) => {
+            inlineHtml({
+                fileContent: html,
+                relativeTo: path.parse(this.extensionPath).root,
+                images: true,
+                svgs: true,
+                scripts: true
+            }, (error, result) => {
                 if(error) {
                     reject(error)
                 }

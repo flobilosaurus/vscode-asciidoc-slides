@@ -95,7 +95,8 @@ suite('Container lifecycle', () => {
                 get html() { return '' },
                 set html(value: string) { webviewWrites++ }
             },
-            onDidDispose: () => new vscode.Disposable(() => undefined)
+            onDidDispose: () => new vscode.Disposable(() => undefined),
+            dispose: () => undefined
         } as any)
         webviewWrites = 0
     })

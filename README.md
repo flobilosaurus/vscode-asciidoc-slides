@@ -63,11 +63,15 @@ yarn compile
 yarn test:node
 ```
 
-Run the extension-host smoke and lifecycle suite separately:
+Run extension-host smoke, lifecycle, and command-level E2E suites separately:
 
 ```bash
 yarn test:extension
 ```
+
+Command E2E tests execute all four contributed commands against saved temporary AsciiDoc documents in a real VS Code host. They exercise real conversion, localhost preview servers, and HTML file writes while capturing platform boundaries for preview panels, save targets, and browser launches.
+
+Extension tests do not automate command-palette clicks, native save dialogs, OS browser processes, workbench pixels, or webview pixels. Those production integrations remain outside this command-level E2E boundary.
 
 Extension tests download/reuse VS Code `1.130.0`, use isolated temporary user-data and extension directories, and require a graphical environment. On headless Linux, run them through Xvfb:
 

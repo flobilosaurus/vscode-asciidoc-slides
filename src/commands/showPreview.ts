@@ -1,12 +1,14 @@
-import * as vscode from 'vscode'
-import { ContainerManager } from "../ContainerManager"
+import { PreviewPanelFactory, defaultCommandAdapters } from '../commandAdapters'
+import { ContainerManager } from '../ContainerManager'
 
-export function showPreview(containerManager: ContainerManager) {
-    containerManager.checkActiveEditor().andDo(
+export function showPreview(
+    containerManager: ContainerManager,
+    panelFactory: PreviewPanelFactory = defaultCommandAdapters.previewPanelFactory
+) {
+    return containerManager.checkActiveEditor().andDo(
         (_editor, container) => {
-            if(!container.hasWebviewPanel()) {
-                const panel = vscode.window.createWebviewPanel('Asciidoc Slides', 'Asciidoc Slides Preview', vscode.ViewColumn.Beside, { enableScripts: true })
-                container.setWebviewPanel(panel)
+            if (!container.hasWebviewPanel()) {
+                container.setWebviewPanel(panelFactory.createPreviewPanel())
             }
         })
 }

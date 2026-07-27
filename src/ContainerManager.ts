@@ -1,21 +1,22 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
 import { Container } from './Container'
+import { ContainerFactory, defaultCommandAdapters } from './commandAdapters'
+
 export class ContainerManager {
+    private editorContainerMap: Map<string, Container>
 
-    private editorContainerMap: Map<vscode.Uri, Container>
-    private context: vscode.ExtensionContext
-    private logger: (line:string) => void
-
-    constructor(context: vscode.ExtensionContext, logger: (line: string) => void) {
-        this.context = context
-        this.logger = logger
+    constructor(
+        private context: vscode.ExtensionContext,
+        private logger: (line: string) => void,
+        private getContainerFactory: () => ContainerFactory = () => defaultCommandAdapters.containerFactory
+    ) {
         this.editorContainerMap = new Map()
     }
-    
+
     public checkActiveEditor() {
         return {
-            andDo: async (action: (editor: vscode.TextEditor, container: Container) => void) => {
+            andDo: async <T>(action: (editor: vscode.TextEditor, container: Container) => T | Promise<T>): Promise<T | undefined> => {
                 const editor = vscode.window.activeTextEditor
                 const isAsciidoc = editor && editor.document && (
                     editor.document.languageId === 'asciidoc' ||
@@ -23,22 +24,40 @@ export class ContainerManager {
                 )
                 if (editor && isAsciidoc) {
                     const container = this.getOrCreateContainer(editor)
-                    action(editor, container)
-                } else {
-                    vscode.window.showErrorMessage("Call this command based on an asciidoc document.")
+                    return await action(editor, container)
                 }
+
+                vscode.window.showErrorMessage("Call this command based on an asciidoc document.")
+                return undefined
             }
         }
     }
 
-    private getOrCreateContainer(editor: vscode.TextEditor) {
-        if(!this.editorContainerMap.has(editor.document.uri)) {
-            this.editorContainerMap.set(editor.document.uri, new Container(this.context, editor, this.logger))
+    public async dispose(): Promise<void> {
+        const containers = Array.from(this.editorContainerMap.values())
+        this.editorContainerMap.clear()
+        await Promise.all(containers.map(container => container.dispose()))
+    }
+
+    private getOrCreateContainer(editor: vscode.TextEditor): Container {
+        const key = editor.document.uri.toString()
+        const existing = this.editorContainerMap.get(key)
+        if (existing && !existing.isDisposed) {
+            return existing
         }
-        const container = this.editorContainerMap.get(editor.document.uri)
-        if(!container) {
-            throw Error('could not create container')
-        }
+
+        let container: Container
+        container = this.getContainerFactory().createContainer(
+            this.context,
+            editor,
+            this.logger,
+            disposedContainer => {
+                if (this.editorContainerMap.get(key) === disposedContainer) {
+                    this.editorContainerMap.delete(key)
+                }
+            }
+        )
+        this.editorContainerMap.set(key, container)
         return container
     }
 }

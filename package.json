@@ -59,7 +59,7 @@
 		"webpack-dev": "webpack --mode development --watch",
 		"compile": "tsc -p ./",
 		"test:node": "mocha --ui tdd \"out/test/node/**/*.test.js\"",
-		"test:extension": "node ./out/test/runExtensionTests.js",
+		"test:extension": "yarn compile && node ./out/test/runExtensionTests.js",
 		"test:coverage": "c8 --reporter=text --reporter=lcov --exclude=out/test/** --exclude=out/extension.js yarn test:node",
 		"test": "yarn compile && yarn test:node && yarn test:extension"
 	},
