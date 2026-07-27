@@ -56,6 +56,14 @@ Use Node.js 20 or newer and Bun 1.3.11 as the package manager:
 bun install --frozen-lockfile
 ```
 
+Type-check and create the production extension bundle with Bun:
+
+```bash
+bun run build
+```
+
+Use `bun run build:watch` while developing the extension.
+
 Compile TypeScript and run the fast Node unit/integration suite without launching VS Code:
 
 ```bash
